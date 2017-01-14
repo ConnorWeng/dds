@@ -18,6 +18,7 @@
         <module>dds-message-service</module>
         <module>dds-rpc</module>
         <module>dds-metrics</module>
+        <module>dds-api</module>
     </modules>
 
     <dependencyManagement>
