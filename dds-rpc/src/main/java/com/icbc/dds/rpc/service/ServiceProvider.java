@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentMap;
 public class ServiceProvider {
     private static ConcurrentMap<Class, Object> instanceMap = new ConcurrentHashMap<Class, Object>();
 
+    // FIXME: 16/01/2017 不能保证单例
     public static <T> T get(Class<T> clazz, Class<? extends T> defaultClass) throws IllegalAccessException, InstantiationException {
         Object instance = instanceMap.get(clazz);
         if (instance != null) return (T) instance;

@@ -4,7 +4,6 @@ import com.icbc.dds.api.RegistryClient;
 import com.icbc.dds.api.exception.AvailableInstanceNotFoundException;
 import com.icbc.dds.api.pojo.InstanceInfo;
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.WebResource;
 import org.junit.Rule;
 import org.junit.Test;

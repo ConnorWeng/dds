@@ -32,14 +32,7 @@ public class RestTemplate {
     }
 
     public <T> T get(String appName, String path, MediaType mediaType, Class<T> responseType, String... query) throws AvailableInstanceNotFoundException {
-        if (query.length % 2 != 0) {
-            throw new IllegalArgumentException("query length must be even");
-        }
-        MultivaluedMapImpl params = new MultivaluedMapImpl();
-        for (int i = 0; i < query.length; i += 2) {
-            params.add(query[i], query[i+1]);
-        }
-        return this.get(appName, path, mediaType, params, responseType);
+        return this.get(appName, path, mediaType, prepareParams(query), responseType);
     }
 
     public <T> T get(String appName, String path, MediaType mediaType, MultivaluedMap params, Class<T> responseType) throws AvailableInstanceNotFoundException {
@@ -52,6 +45,10 @@ public class RestTemplate {
         throw new AvailableInstanceNotFoundException(String.format("No available instance of app %s", appName));
     }
 
+    public <T> T get(String ipAddr, int port, String path, MediaType mediaType, Class<T> responseType, String... query) {
+        return get(ipAddr, port, path, mediaType, prepareParams(query), responseType);
+    }
+
     public <T> T get(String ipAddr, int port, String path, MediaType mediaType, MultivaluedMap params, Class<T> responseType) {
         T response = client.resource("http://" + ipAddr + ":" + port)
                 .path(path)
@@ -59,5 +56,16 @@ public class RestTemplate {
                 .accept(mediaType)
                 .get(responseType);
         return response;
+    }
+
+    private MultivaluedMap prepareParams(String... query) {
+        if (query.length % 2 != 0) {
+            throw new IllegalArgumentException("query length must be even");
+        }
+        MultivaluedMapImpl params = new MultivaluedMapImpl();
+        for (int i = 0; i < query.length; i += 2) {
+            params.add(query[i], query[i+1]);
+        }
+        return params;
     }
 }

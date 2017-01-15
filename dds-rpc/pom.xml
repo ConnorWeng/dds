@@ -17,6 +17,10 @@
             <artifactId>jersey-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.icbc.dds</groupId>
             <artifactId>dds-api</artifactId>
             <version>${project.parent.version}</version>
