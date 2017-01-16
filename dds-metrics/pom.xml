@@ -11,5 +11,15 @@
 
     <artifactId>dds-metrics</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>com.icbc.dds</groupId>
+            <artifactId>dds-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
+    </dependencies>
 </project>
