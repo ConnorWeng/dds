@@ -4,6 +4,7 @@ import com.icbc.dds.api.RegistryClient;
 import com.icbc.dds.api.exception.AvailableInstanceNotFoundException;
 import com.icbc.dds.api.pojo.InstanceInfo;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import javax.ws.rs.core.MediaType;
@@ -50,12 +51,13 @@ public class RestTemplate {
     }
 
     public <T> T get(String ipAddr, int port, String path, MediaType mediaType, MultivaluedMap params, Class<T> responseType) {
-        T response = client.resource("http://" + ipAddr + ":" + port)
+        ClientResponse response = client.resource("http://" + ipAddr + ":" + port)
                 .path(path)
                 .queryParams(params)
                 .accept(mediaType)
-                .get(responseType);
-        return response;
+                .get(ClientResponse.class);
+        int status = response.getStatus();
+        return response.getEntity(responseType);
     }
 
     private MultivaluedMap prepareParams(String... query) {
