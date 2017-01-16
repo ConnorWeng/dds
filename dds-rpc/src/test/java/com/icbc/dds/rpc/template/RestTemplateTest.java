@@ -1,5 +1,6 @@
 package com.icbc.dds.rpc.template;
 
+import com.icbc.dds.api.Metrics;
 import com.icbc.dds.api.RegistryClient;
 import com.icbc.dds.api.exception.DDSRestRPCException;
 import com.icbc.dds.api.pojo.InstanceInfo;
@@ -24,6 +25,8 @@ public class RestTemplateTest {
 
     @Test
     public void retry3TimesToCallServiceWithProblemThenThrowException() throws DDSRestRPCException {
+        Metrics mockedMetrics = mock(Metrics.class);
+
         RegistryClient mockedRegistryClient = mock(RegistryClient.class);
         when(mockedRegistryClient.getInstanceByAppName("ServiceWithProblem")).thenReturn(new InstanceInfo("127.0.0.1", 55555));
         Client mockedClient = mock(Client.class);
@@ -36,8 +39,9 @@ public class RestTemplateTest {
 
         try {
             thrown.expect(DDSRestRPCException.class);
-            new RestTemplate(mockedClient, mockedRegistryClient).get("ServiceWithProblem", "/", MediaType.APPLICATION_JSON_TYPE, String.class);
+            new RestTemplate(mockedClient, mockedRegistryClient, mockedMetrics).get("ServiceWithProblem", "/", MediaType.APPLICATION_JSON_TYPE, String.class);
         } finally {
+            verify(mockedMetrics, times(3)).tickStart("GET://127.0.0.1:55555/");
             verify(mockedRegistryClient, times(3)).getInstanceByAppName("ServiceWithProblem");
             verify(mockedClient, times(3)).resource("http://127.0.0.1:55555");
             verify(mockedWebResource, times(3)).path("/");

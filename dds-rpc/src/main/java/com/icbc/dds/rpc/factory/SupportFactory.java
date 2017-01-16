@@ -1,6 +1,8 @@
 package com.icbc.dds.rpc.factory;
 
+import com.icbc.dds.api.Metrics;
 import com.icbc.dds.api.RegistryClient;
+import com.icbc.dds.rpc.service.DefaultMetrics;
 import com.icbc.dds.rpc.service.DefaultRegistryClient;
 import com.icbc.dds.rpc.service.ServiceProvider;
 import com.icbc.dds.rpc.support.RestSupport;
@@ -21,9 +23,10 @@ public class SupportFactory {
         if (instance != null) return (T) instance;
 
         RegistryClient registryClient = ServiceProvider.get(RegistryClient.class, DefaultRegistryClient.class);
+        Metrics metrics = ServiceProvider.get(Metrics.class, DefaultMetrics.class);
 
         RestSupport restSupport = clazz.newInstance();
-        restSupport.setRestTemplate(new RestTemplate(null, registryClient));
+        restSupport.setRestTemplate(new RestTemplate(null, registryClient, metrics));
 
         instanceMap.put(clazz, restSupport);
         return (T) restSupport;

@@ -1,5 +1,6 @@
 package com.icbc.dds.rpc.template;
 
+import com.icbc.dds.api.Metrics;
 import com.icbc.dds.api.RegistryClient;
 import com.icbc.dds.api.exception.DDSRestRPCException;
 import com.icbc.dds.api.pojo.InstanceInfo;
@@ -19,10 +20,12 @@ public class RestTemplate {
 
     private Client client;
     private RegistryClient registryClient;
+    private Metrics metrics;
 
-    public RestTemplate(Client client, RegistryClient registryClient) {
+    public RestTemplate(Client client, RegistryClient registryClient, Metrics metrics) {
         this.client = client;
         this.registryClient = registryClient;
+        this.metrics = metrics;
     }
 
     public Client getClient() {
@@ -58,12 +61,15 @@ public class RestTemplate {
     }
 
     public <T> T get(String ipAddr, int port, String path, MediaType mediaType, MultivaluedMap params, Class<T> responseType) {
+        String metricsName = "GET://" + ipAddr + ":" + port + path;
+        metrics.tickStart(metricsName);
         ClientResponse response = client.resource("http://" + ipAddr + ":" + port)
                 .path(path)
                 .queryParams(params)
                 .accept(mediaType)
                 .get(ClientResponse.class);
         int status = response.getStatus();
+        metrics.tickStop(metricsName, status < 400);
         return response.getEntity(responseType);
     }
 
