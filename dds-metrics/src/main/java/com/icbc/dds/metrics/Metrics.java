@@ -12,6 +12,9 @@ import java.util.HashMap;
 public final class Metrics implements com.icbc.dds.api.Metrics {
     private final MetricRegistry registry = new MetricRegistry();
 
+    public Metrics() {
+    }
+
     private final ThreadLocal<HashMap<String, Context>> contextMap =
             new ThreadLocal<HashMap<String, Context>>() {
                 @Override
@@ -29,6 +32,10 @@ public final class Metrics implements com.icbc.dds.api.Metrics {
     public void tickStop(String name, boolean isSuccess) {
         Timer.Context context = contextMap.get().get(name);
         context.stop();
+        if (!isSuccess) {
+            // FIXME: 16/01/2017 按分钟取平均数，非绝对准确
+            registry.meter(name + "#fail").mark();
+        }
     }
 
     public MetricRegistry getRegistry() {
