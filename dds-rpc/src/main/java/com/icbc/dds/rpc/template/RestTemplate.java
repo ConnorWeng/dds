@@ -1,9 +1,10 @@
 package com.icbc.dds.rpc.template;
 
 import com.icbc.dds.api.RegistryClient;
-import com.icbc.dds.api.exception.AvailableInstanceNotFoundException;
+import com.icbc.dds.api.exception.DDSRestRPCException;
 import com.icbc.dds.api.pojo.InstanceInfo;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
@@ -32,18 +33,24 @@ public class RestTemplate {
         this.client = client;
     }
 
-    public <T> T get(String appName, String path, MediaType mediaType, Class<T> responseType, String... query) throws AvailableInstanceNotFoundException {
+    public <T> T get(String appName, String path, MediaType mediaType, Class<T> responseType, String... query) throws DDSRestRPCException {
         return this.get(appName, path, mediaType, prepareParams(query), responseType);
     }
 
-    public <T> T get(String appName, String path, MediaType mediaType, MultivaluedMap params, Class<T> responseType) throws AvailableInstanceNotFoundException {
+    public <T> T get(String appName, String path, MediaType mediaType, MultivaluedMap params, Class<T> responseType) throws DDSRestRPCException {
+        ClientHandlerException clientHandlerException = null;
         for (int i = 0; i < RETRY_TIMES; i++) {
-            InstanceInfo instanceInfo = registryClient.getInstanceByAppName(appName);
-            if (instanceInfo != null) {
+            try {
+                InstanceInfo instanceInfo = registryClient.getInstanceByAppName(appName);
                 return this.get(instanceInfo.getIpAddr(), instanceInfo.getPort(), path, mediaType, params, responseType);
+            } catch (ClientHandlerException e) {
+                // TODO: 16/01/2017 记录日志
+                if (i == RETRY_TIMES - 1) {
+                    clientHandlerException = e;
+                }
             }
         }
-        throw new AvailableInstanceNotFoundException(String.format("No available instance of app %s", appName));
+        throw new DDSRestRPCException(clientHandlerException);
     }
 
     public <T> T get(String ipAddr, int port, String path, MediaType mediaType, Class<T> responseType, String... query) {
