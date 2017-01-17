@@ -19,6 +19,7 @@
         <module>dds-rpc</module>
         <module>dds-metrics</module>
         <module>dds-api</module>
+        <module>dds-demo</module>
         <module>spring-boot-starter-dds</module>
     </modules>
 
