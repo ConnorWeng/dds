@@ -3,19 +3,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>dds-message-service</artifactId>
+        <artifactId>dds-parent</artifactId>
         <groupId>com.icbc.dds</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>dds-message-proxy</artifactId>
+    <artifactId>dds-demo</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>dds-demo-rest</module>
+    </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.icbc.dds</groupId>
-            <artifactId>spring-boot-starter-dds</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-    </dependencies>
+
 </project>
