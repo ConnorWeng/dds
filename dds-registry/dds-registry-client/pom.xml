@@ -11,5 +11,25 @@
 
     <artifactId>dds-registry-client</artifactId>
 
-
+	<dependencies>
+		<dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>com.icbc.dds</groupId>
+        	<artifactId>dds-api</artifactId>
+        	<version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+        	<groupId>com.icbc.dds</groupId>
+        	<artifactId>dds-registry-server</artifactId>
+        	<version>${project.parent.version}</version>
+        	<scope>test</scope>
+        </dependency>
+	</dependencies>
 </project>

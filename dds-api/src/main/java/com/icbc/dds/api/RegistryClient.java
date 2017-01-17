@@ -7,4 +7,8 @@ import com.icbc.dds.api.pojo.InstanceInfo;
  */
 public interface RegistryClient {
     InstanceInfo getInstanceByAppName(String appName);
+    
+    void register();
+    
+    void deRegister();
 }
