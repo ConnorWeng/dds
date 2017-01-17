@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.icbc.dds.api.RegistryClient;
 import com.icbc.dds.api.pojo.InstanceInfo;
 import com.icbc.dds.registry.client.cache.Cache;
@@ -34,16 +32,16 @@ public class DDSClient implements RegistryClient {
 		String port = properties.getProperty("port");
 		String localZone = properties.getProperty("localZone");
 
-		if(StringUtils.isNotBlank(hostName) 
-				&& StringUtils.isNotBlank(app) 
-				&& StringUtils.isNotBlank(ipAddr) 
-				&& StringUtils.isNotBlank(port) 
-				&& StringUtils.isNotBlank(localZone)) {
+		if((hostName != null && !"".equals(hostName)) 
+				&& (app != null && !"".equals(app)) 
+				&& (ipAddr != null && !"".equals(ipAddr)) 
+				&& (port != null && !"".equals(port)) 
+				&& (localZone != null && !"".equals(localZone))) {
 			this.instance = new Instance(hostName, app, ipAddr, localZone, Integer.parseInt(port));
 		}
 
 		String consumApps = properties.getProperty("consumApps");
-		if (StringUtils.isNotBlank(consumApps)) {
+		if (consumApps != null && !"".equals(consumApps)) {
 			List<String> apps = Arrays.asList(consumApps.split(this.separator));
 			this.cache = new Cache(this.eurekaClient, apps, localZone);
 		}
