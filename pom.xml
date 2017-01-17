@@ -19,6 +19,7 @@
         <module>dds-rpc</module>
         <module>dds-metrics</module>
         <module>dds-api</module>
+        <module>spring-boot-starter-dds</module>
     </modules>
 
     <dependencyManagement>
@@ -34,9 +35,29 @@
                 <version>1.9.1</version>
             </dependency>
             <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>1.9.1</version>
+            </dependency>
+            <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-core</artifactId>
                 <version>3.1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>7.0.73</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-logging-juli</artifactId>
+                <version>7.0.73</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>1.4.1.RELEASE</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
