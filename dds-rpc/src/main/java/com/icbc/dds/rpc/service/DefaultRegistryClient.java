@@ -11,4 +11,14 @@ public class DefaultRegistryClient implements RegistryClient {
     public InstanceInfo getInstanceByAppName(String appName) {
         return null;
     }
+
+    @Override
+    public void register() {
+        
+    }
+
+    @Override
+    public void deRegister() {
+
+    }
 }
