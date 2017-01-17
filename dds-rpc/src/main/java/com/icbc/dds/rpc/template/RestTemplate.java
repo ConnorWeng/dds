@@ -17,6 +17,7 @@ import javax.ws.rs.core.MultivaluedMap;
  */
 public class RestTemplate {
     private static final int RETRY_TIMES = 3;
+    private static final int RETRY_INTERVAL = 1000;
 
     private Client client;
     private RegistryClient registryClient;
@@ -51,6 +52,12 @@ public class RestTemplate {
                 if (i == RETRY_TIMES - 1) {
                     clientHandlerException = e;
                 }
+                try {
+                    Thread.sleep(RETRY_INTERVAL);
+                } catch (InterruptedException e1) {
+                    // TODO: 17/01/2017 重新设置中断状态是否有必要？
+                    Thread.currentThread().interrupt();
+                }
             }
         }
         throw new DDSRestRPCException(clientHandlerException);
@@ -68,6 +75,41 @@ public class RestTemplate {
                 .queryParams(params)
                 .accept(mediaType)
                 .get(ClientResponse.class);
+        int status = response.getStatus();
+        metrics.tickStop(metricsName, status < 400);
+        return response.getEntity(responseType);
+    }
+
+    public <T> T post(String appName, String path, MediaType mediaType, Object entity, Class<T> responseType) throws DDSRestRPCException {
+        ClientHandlerException clientHandlerException = null;
+        for (int i = 0; i < RETRY_TIMES; i++) {
+            try {
+                InstanceInfo instanceInfo = registryClient.getInstanceByAppName(appName);
+                return this.post(instanceInfo.getIpAddr(), instanceInfo.getPort(), path, mediaType, entity, responseType);
+            } catch (ClientHandlerException e) {
+                // TODO: 16/01/2017 记录日志
+                if (i == RETRY_TIMES - 1) {
+                    clientHandlerException = e;
+                }
+                try {
+                    Thread.sleep(RETRY_INTERVAL);
+                } catch (InterruptedException e1) {
+                    // TODO: 17/01/2017 重新设置中断状态是否有必要？
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+        throw new DDSRestRPCException(clientHandlerException);
+    }
+
+    public <T> T post(String ipAddr, int port, String path, MediaType mediaType, Object entity, Class<T> responseType) {
+        String metricsName = "POST://" + ipAddr + ":" + port + path;
+        metrics.tickStart(metricsName);
+        ClientResponse response = client.resource("http://" + ipAddr + ":" + port)
+                .path(path)
+                .entity(entity)
+                .accept(mediaType)
+                .post(ClientResponse.class);
         int status = response.getStatus();
         metrics.tickStop(metricsName, status < 400);
         return response.getEntity(responseType);
