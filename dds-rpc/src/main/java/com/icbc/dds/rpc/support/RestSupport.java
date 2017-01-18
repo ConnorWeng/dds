@@ -6,6 +6,8 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.GZIPContentEncodingFilter;
 import com.sun.jersey.api.json.JSONConfiguration;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Created by kfzx-wengxj on 14/01/2017.
@@ -17,6 +19,7 @@ public abstract class RestSupport {
         DefaultClientConfig clientConfig = new DefaultClientConfig();
         clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
         clientConfig.getClasses().add(JacksonJsonProvider.class);
+        clientConfig.getClasses().add(DDSObjectMapperProvider.class);
         Client client = Client.create(clientConfig);
         client.addFilter(new GZIPContentEncodingFilter());
         return client;
