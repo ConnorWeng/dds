@@ -6,6 +6,7 @@ import com.icbc.dds.rpc.factory.SupportFactory;
 import com.icbc.dds.rpc.pojo.DataObject;
 import com.icbc.dds.rpc.pojo.DetailsObject;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
@@ -27,6 +28,7 @@ public class RestSupportIntegrationTest extends RestSupport {
     RegistryClient mockedRegistryClient = mock(RegistryClient.class);
     Metrics mockedMetrics = mock(Metrics.class);
     static ExecutorService executorService;
+    RestSupportIntegrationTest restSupport;
 
     @BeforeClass
     public static void setUp() throws ExecutionException, InterruptedException {
@@ -44,16 +46,19 @@ public class RestSupportIntegrationTest extends RestSupport {
         }
     }
 
+    @Before
+    public void setUpRestSupport() {
+        restSupport = SupportFactory.getRestSupport(RestSupportIntegrationTest.class);
+    }
+
     @Test
     public void getServiceConsumesStringProducesString() {
-        RestSupportIntegrationTest restSupport = SupportFactory.getRestSupport(RestSupportIntegrationTest.class);
         String result = restSupport.getRestTemplate().get("localhost", 8081, "/getServiceConsumesStringProducesString", MediaType.TEXT_PLAIN_TYPE, String.class, "param1", "ok", "param2", "中文");
         assertEquals("ok 中文", result);
     }
 
     @Test
     public void getServiceConsumesStringProducesJson() {
-        RestSupportIntegrationTest restSupport = SupportFactory.getRestSupport(RestSupportIntegrationTest.class);
         DataObject dataObject = restSupport.getRestTemplate().get("localhost", 8081, "/getServiceConsumesStringProducesJson", MediaType.APPLICATION_JSON_TYPE, DataObject.class, "param1", "中文", "param2", "100");
         assertEquals("中文", dataObject.getStringValue());
         assertEquals(100, dataObject.getIntValue());
@@ -63,7 +68,6 @@ public class RestSupportIntegrationTest extends RestSupport {
 
     @Test
     public void postServiceConsumesStringProducesString() {
-        RestSupportIntegrationTest restSupport = SupportFactory.getRestSupport(RestSupportIntegrationTest.class);
         String result = restSupport.getRestTemplate().post("localhost", 8081, "/postServiceConsumesStringProducesString", MediaType.TEXT_PLAIN_TYPE, String.class, "param1", "ok", "param2", "中文");
         assertEquals("ok 中文", result);
     }
