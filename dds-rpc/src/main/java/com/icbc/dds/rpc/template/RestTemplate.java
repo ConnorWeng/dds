@@ -68,6 +68,7 @@ public class RestTemplate {
     }
 
     public <T> T get(String ipAddr, int port, String path, MediaType mediaType, MultivaluedMap params, Class<T> responseType) {
+        // TODO: 18/01/2017 需要捕获ClientHandlerException再封装成DDSRestRPCException吗？
         String metricsName = "GET://" + ipAddr + ":" + port + path;
         metrics.tickStart(metricsName);
         ClientResponse response = client.resource("http://" + ipAddr + ":" + port)
@@ -80,12 +81,16 @@ public class RestTemplate {
         return response.getEntity(responseType);
     }
 
-    public <T> T post(String appName, String path, MediaType mediaType, Object entity, Class<T> responseType) throws DDSRestRPCException {
+    public <T> T post(String appName, String path, MediaType mediaType, Class<T> responseType, String... query) throws DDSRestRPCException {
+        return this.get(appName, path, mediaType, prepareParams(query), responseType);
+    }
+
+    public <T> T post(String appName, String path, MediaType mediaType, MultivaluedMap params, Class<T> responseType) throws DDSRestRPCException {
         ClientHandlerException clientHandlerException = null;
         for (int i = 0; i < RETRY_TIMES; i++) {
             try {
                 InstanceInfo instanceInfo = registryClient.getInstanceByAppName(appName);
-                return this.post(instanceInfo.getIpAddr(), instanceInfo.getPort(), path, mediaType, entity, responseType);
+                return this.post(instanceInfo.getIpAddr(), instanceInfo.getPort(), path, mediaType, params, responseType);
             } catch (ClientHandlerException e) {
                 // TODO: 16/01/2017 记录日志
                 if (i == RETRY_TIMES - 1) {
@@ -102,12 +107,16 @@ public class RestTemplate {
         throw new DDSRestRPCException(clientHandlerException);
     }
 
-    public <T> T post(String ipAddr, int port, String path, MediaType mediaType, Object entity, Class<T> responseType) {
+    public <T> T post(String ipAddr, int port, String path, MediaType mediaType, Class<T> responseType, String... query) {
+        return this.post(ipAddr, port, path, mediaType, prepareParams(query), responseType);
+    }
+
+    public <T> T post(String ipAddr, int port, String path, MediaType mediaType, MultivaluedMap params, Class<T> responseType) {
         String metricsName = "POST://" + ipAddr + ":" + port + path;
         metrics.tickStart(metricsName);
         ClientResponse response = client.resource("http://" + ipAddr + ":" + port)
                 .path(path)
-                .entity(entity)
+                .queryParams(params)
                 .accept(mediaType)
                 .post(ClientResponse.class);
         int status = response.getStatus();

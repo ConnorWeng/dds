@@ -25,5 +25,11 @@
             <artifactId>dds-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.icbc.dds</groupId>
+            <artifactId>spring-boot-starter-dds</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

@@ -1,0 +1,68 @@
+package com.icbc.dds.rpc.support;
+
+import com.icbc.dds.api.Metrics;
+import com.icbc.dds.api.RegistryClient;
+import com.icbc.dds.rpc.factory.SupportFactory;
+import com.icbc.dds.rpc.pojo.DataObject;
+import com.icbc.dds.rpc.pojo.ReturnObject;
+import com.icbc.dds.springboot.annotation.DDSService;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
+/**
+ * Created by kfzx-wengxj on 17/01/2017.
+ */
+@SpringBootApplication
+public class RestSupportIntegrationTest extends RestSupport {
+    RegistryClient mockedRegistryClient = mock(RegistryClient.class);
+    Metrics mockedMetrics = mock(Metrics.class);
+    static ExecutorService executorService;
+
+    @BeforeClass
+    public static void setUp() throws ExecutionException, InterruptedException {
+        executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                SpringApplication.run(RestSupportIntegrationTest.class);
+            }
+        });
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    @Test
+    public void getServiceConsumesStringProducesString() {
+        RestSupportIntegrationTest restSupport = SupportFactory.getRestSupport(RestSupportIntegrationTest.class);
+        String result = restSupport.getRestTemplate().get("localhost", 8081, "/getServiceConsumesStringProducesString/", MediaType.TEXT_PLAIN_TYPE, String.class, "param1", "ok", "param2", "中文");
+        assertEquals("ok 中文", result);
+    }
+
+    @Test
+    public void postServiceConsumesStringProducesString() {
+        RestSupportIntegrationTest restSupport = SupportFactory.getRestSupport(RestSupportIntegrationTest.class);
+        String result = restSupport.getRestTemplate().post("localhost", 8081, "/postServiceConsumesStringProducesString/", MediaType.TEXT_PLAIN_TYPE, String.class, "param1", "ok", "param2", "中文");
+        assertEquals("ok 中文", result);
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        executorService.shutdown();
+    }
+}
