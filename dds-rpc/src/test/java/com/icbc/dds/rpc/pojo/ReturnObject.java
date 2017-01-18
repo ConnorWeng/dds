@@ -1,6 +1,7 @@
 package com.icbc.dds.rpc.pojo;
 
 import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Created by kfzx-wengxj on 17/01/2017.
@@ -10,7 +11,7 @@ public class ReturnObject {
     private String message;
 
     @JsonCreator
-    public ReturnObject(boolean isError, String message) {
+    public ReturnObject(@JsonProperty("isError") boolean isError, @JsonProperty("message") String message) {
         this.isError = isError;
         this.message = message;
     }

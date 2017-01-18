@@ -2,6 +2,7 @@ package com.icbc.dds.rpc.support;
 
 import com.icbc.dds.rpc.pojo.DataObject;
 import com.icbc.dds.rpc.pojo.DetailsObject;
+import com.icbc.dds.rpc.pojo.ReturnObject;
 import com.icbc.dds.springboot.annotation.DDSService;
 
 import javax.ws.rs.*;
@@ -45,5 +46,13 @@ public class RestTestServices {
     @Produces(MediaType.TEXT_PLAIN)
     public Response postServiceConsumesStringProducesString(@QueryParam("param1") String param1, @QueryParam("param2") String param2) {
         return Response.ok(param1 + " " + param2).build();
+    }
+
+    @POST
+    @Path("postServiceConsumesFormProducesJson")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response postServiceConsumesFormProducesJson(@FormParam("param1") String param1, @FormParam("param2") boolean param2) {
+        return Response.ok(new ReturnObject(param2, param1)).build();
     }
 }

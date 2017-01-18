@@ -7,10 +7,13 @@ import com.icbc.dds.api.pojo.InstanceInfo;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import java.util.Map;
 
 /**
  * Created by kfzx-wengxj on 14/01/2017.
@@ -86,16 +89,16 @@ public class RestTemplate {
         return response.getEntity(responseType);
     }
 
-    public <T> T post(String appName, String path, MediaType mediaType, Class<T> responseType, String... query) throws DDSRestRPCException {
-        return this.post(appName, path, mediaType, prepareParams(query), responseType);
+    public <T> T post(String appName, String path, MediaType mediaType, Class<T> responseType, Object entity, String... query) throws DDSRestRPCException {
+        return this.post(appName, path, mediaType, prepareParams(query), entity, responseType);
     }
 
-    public <T> T post(String appName, String path, MediaType mediaType, MultivaluedMap params, Class<T> responseType) throws DDSRestRPCException {
+    public <T> T post(String appName, String path, MediaType mediaType, MultivaluedMap params, Object entity, Class<T> responseType) throws DDSRestRPCException {
         ClientHandlerException clientHandlerException = null;
         for (int i = 0; i < RETRY_TIMES; i++) {
             try {
                 InstanceInfo instanceInfo = registryClient.getInstanceByAppName(appName);
-                return this.post(instanceInfo.getIpAddr(), instanceInfo.getPort(), path, mediaType, params, responseType);
+                return this.post(instanceInfo.getIpAddr(), instanceInfo.getPort(), path, mediaType, params, entity, responseType);
             } catch (ClientHandlerException e) {
                 // TODO: 16/01/2017 记录日志
                 if (i == RETRY_TIMES - 1) {
@@ -112,18 +115,29 @@ public class RestTemplate {
         throw new DDSRestRPCException(clientHandlerException);
     }
 
-    public <T> T post(String ipAddr, int port, String path, MediaType mediaType, Class<T> responseType, String... query) {
-        return this.post(ipAddr, port, path, mediaType, prepareParams(query), responseType);
+    public <T> T post(String ipAddr, int port, String path, MediaType mediaType, Class<T> responseType, Object entity, String... query) {
+        return this.post(ipAddr, port, path, mediaType, prepareParams(query), entity, responseType);
     }
 
-    public <T> T post(String ipAddr, int port, String path, MediaType mediaType, MultivaluedMap params, Class<T> responseType) {
+    public <T> T post(String ipAddr, int port, String path, MediaType mediaType, MultivaluedMap params, Object entity, Class<T> responseType) {
         String metricsName = "POST://" + ipAddr + ":" + port + path;
         metrics.tickStart(metricsName);
-        ClientResponse response = client.resource("http://" + ipAddr + ":" + port)
+        WebResource.Builder builder = client.resource("http://" + ipAddr + ":" + port)
                 .path(path)
                 .queryParams(params)
-                .accept(mediaType)
-                .post(ClientResponse.class);
+                .accept(mediaType);
+        ClientResponse response;
+        if (Map.class.isInstance(entity)) {
+            builder.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+            Form form = new Form();
+            Map<String, String> entityMap = (Map) entity;
+            for (String key: entityMap.keySet()) {
+                form.add(key, entityMap.get(key));
+            }
+            response = builder.post(ClientResponse.class, form);
+        } else {
+            response = builder.post(ClientResponse.class);
+        }
         int status = response.getStatus();
         metrics.tickStop(metricsName, status < 400);
         return response.getEntity(responseType);

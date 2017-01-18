@@ -7,6 +7,7 @@ import com.icbc.dds.api.pojo.InstanceInfo;
 import com.icbc.dds.rpc.factory.SupportFactory;
 import com.icbc.dds.rpc.pojo.DataObject;
 import com.icbc.dds.rpc.pojo.DetailsObject;
+import com.icbc.dds.rpc.pojo.ReturnObject;
 import com.icbc.dds.rpc.template.RestTemplate;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -16,12 +17,16 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by kfzx-wengxj on 17/01/2017.
@@ -73,8 +78,18 @@ public class RestSupportIntegrationTest extends RestSupport {
 
     @Test
     public void postServiceConsumesStringProducesString() throws DDSRestRPCException {
-        String result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesStringProducesString", MediaType.TEXT_PLAIN_TYPE, String.class, "param1", "ok", "param2", "中文");
+        String result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesStringProducesString", MediaType.TEXT_PLAIN_TYPE, String.class, null, "param1", "ok", "param2", "中文");
         assertEquals("ok 中文", result);
+    }
+
+    @Test
+    public void postServiceConsumesFormProducesJson() throws DDSRestRPCException {
+        Map<String, String> formMap = new HashMap<String, String>();
+        formMap.put("param1", "中文");
+        formMap.put("param2", "false");
+        ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesFormProducesJson", MediaType.APPLICATION_JSON_TYPE, ReturnObject.class, formMap);
+        assertEquals(result.getMessage(), "中文");
+        assertFalse(result.isError());
     }
 
     @AfterClass
