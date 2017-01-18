@@ -23,6 +23,11 @@ public class RestTemplate {
     private RegistryClient registryClient;
     private Metrics metrics;
 
+    public RestTemplate(RegistryClient registryClient, Metrics metrics) {
+        this.registryClient = registryClient;
+        this.metrics = metrics;
+    }
+
     public RestTemplate(Client client, RegistryClient registryClient, Metrics metrics) {
         this.client = client;
         this.registryClient = registryClient;
@@ -82,7 +87,7 @@ public class RestTemplate {
     }
 
     public <T> T post(String appName, String path, MediaType mediaType, Class<T> responseType, String... query) throws DDSRestRPCException {
-        return this.get(appName, path, mediaType, prepareParams(query), responseType);
+        return this.post(appName, path, mediaType, prepareParams(query), responseType);
     }
 
     public <T> T post(String appName, String path, MediaType mediaType, MultivaluedMap params, Class<T> responseType) throws DDSRestRPCException {

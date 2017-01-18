@@ -28,7 +28,7 @@ public abstract class RestSupport {
 
     public void setRestTemplate(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        if (restTemplate.getClient() == null) {
+        if (this.restTemplate.getClient() == null) {
             this.restTemplate.setClient(initClient());
         }
     }

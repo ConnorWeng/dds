@@ -31,7 +31,7 @@ public class SupportFactory {
             Metrics metrics = ServiceProvider.get(Metrics.class, DefaultMetrics.class);
 
             RestSupport restSupport = clazz.newInstance();
-            restSupport.setRestTemplate(new RestTemplate(null, registryClient, metrics));
+            restSupport.setRestTemplate(new RestTemplate(registryClient, metrics));
 
             instanceMap.put(clazz, restSupport);
             return (T) restSupport;
