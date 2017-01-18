@@ -4,11 +4,9 @@ import com.icbc.dds.rpc.pojo.DataObject;
 import com.icbc.dds.rpc.pojo.DetailsObject;
 import com.icbc.dds.springboot.annotation.DDSService;
 
-import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

@@ -2,9 +2,12 @@ package com.icbc.dds.rpc.support;
 
 import com.icbc.dds.api.Metrics;
 import com.icbc.dds.api.RegistryClient;
+import com.icbc.dds.api.exception.DDSRestRPCException;
+import com.icbc.dds.api.pojo.InstanceInfo;
 import com.icbc.dds.rpc.factory.SupportFactory;
 import com.icbc.dds.rpc.pojo.DataObject;
 import com.icbc.dds.rpc.pojo.DetailsObject;
+import com.icbc.dds.rpc.template.RestTemplate;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -18,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by kfzx-wengxj on 17/01/2017.
@@ -48,18 +51,20 @@ public class RestSupportIntegrationTest extends RestSupport {
 
     @Before
     public void setUpRestSupport() {
+        when(mockedRegistryClient.getInstanceByAppName("RestTestServices")).thenReturn(new InstanceInfo("localhost", 8081));
         restSupport = SupportFactory.getRestSupport(RestSupportIntegrationTest.class);
+        restSupport.setRestTemplate(new RestTemplate(mockedRegistryClient, mockedMetrics));
     }
 
     @Test
-    public void getServiceConsumesStringProducesString() {
-        String result = restSupport.getRestTemplate().get("localhost", 8081, "/getServiceConsumesStringProducesString", MediaType.TEXT_PLAIN_TYPE, String.class, "param1", "ok", "param2", "中文");
+    public void getServiceConsumesStringProducesString() throws DDSRestRPCException {
+        String result = restSupport.getRestTemplate().get("RestTestServices", "/getServiceConsumesStringProducesString", MediaType.TEXT_PLAIN_TYPE, String.class, "param1", "ok", "param2", "中文");
         assertEquals("ok 中文", result);
     }
 
     @Test
-    public void getServiceConsumesStringProducesJson() {
-        DataObject dataObject = restSupport.getRestTemplate().get("localhost", 8081, "/getServiceConsumesStringProducesJson", MediaType.APPLICATION_JSON_TYPE, DataObject.class, "param1", "中文", "param2", "100");
+    public void getServiceConsumesStringProducesJson() throws DDSRestRPCException {
+        DataObject dataObject = restSupport.getRestTemplate().get("RestTestServices", "/getServiceConsumesStringProducesJson", MediaType.APPLICATION_JSON_TYPE, DataObject.class, "param1", "中文", "param2", "100");
         assertEquals("中文", dataObject.getStringValue());
         assertEquals(100, dataObject.getIntValue());
         assertEquals(new DetailsObject("中文", new int[] {1, 2, 3}), dataObject.getDeftailsObject());
@@ -67,8 +72,8 @@ public class RestSupportIntegrationTest extends RestSupport {
     }
 
     @Test
-    public void postServiceConsumesStringProducesString() {
-        String result = restSupport.getRestTemplate().post("localhost", 8081, "/postServiceConsumesStringProducesString", MediaType.TEXT_PLAIN_TYPE, String.class, "param1", "ok", "param2", "中文");
+    public void postServiceConsumesStringProducesString() throws DDSRestRPCException {
+        String result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesStringProducesString", MediaType.TEXT_PLAIN_TYPE, String.class, "param1", "ok", "param2", "中文");
         assertEquals("ok 中文", result);
     }
 
