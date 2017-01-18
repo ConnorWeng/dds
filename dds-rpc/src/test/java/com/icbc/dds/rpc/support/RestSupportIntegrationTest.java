@@ -4,6 +4,7 @@ import com.icbc.dds.api.Metrics;
 import com.icbc.dds.api.RegistryClient;
 import com.icbc.dds.rpc.factory.SupportFactory;
 import com.icbc.dds.rpc.pojo.DataObject;
+import com.icbc.dds.rpc.pojo.DetailsObject;
 import com.icbc.dds.rpc.pojo.ReturnObject;
 import com.icbc.dds.springboot.annotation.DDSService;
 import org.junit.AfterClass;
@@ -52,6 +53,16 @@ public class RestSupportIntegrationTest extends RestSupport {
         RestSupportIntegrationTest restSupport = SupportFactory.getRestSupport(RestSupportIntegrationTest.class);
         String result = restSupport.getRestTemplate().get("localhost", 8081, "/getServiceConsumesStringProducesString/", MediaType.TEXT_PLAIN_TYPE, String.class, "param1", "ok", "param2", "中文");
         assertEquals("ok 中文", result);
+    }
+
+    @Test
+    public void getServiceConsumesStringProducesJson() {
+        RestSupportIntegrationTest restSupport = SupportFactory.getRestSupport(RestSupportIntegrationTest.class);
+        DataObject dataObject = restSupport.getRestTemplate().get("localhost", 8081, "/getServiceConsumesStringProducesJson/", MediaType.APPLICATION_JSON_TYPE, DataObject.class, "param1", "中文", "param2", "100");
+        assertEquals("中文", dataObject.getStringValue());
+        assertEquals(100, dataObject.getIntValue());
+        assertEquals(new DetailsObject("中文", new int[] {1, 2, 3}), dataObject.getDeftailsObject());
+        assertEquals(new DetailsObject("d2", new int[] {2}), dataObject.getDetailsObjectList().get(1));
     }
 
     @Test
