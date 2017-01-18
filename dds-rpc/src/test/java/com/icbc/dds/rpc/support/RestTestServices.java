@@ -55,4 +55,12 @@ public class RestTestServices {
     public Response postServiceConsumesFormProducesJson(@FormParam("param1") String param1, @FormParam("param2") boolean param2) {
         return Response.ok(new ReturnObject(param2, param1)).build();
     }
+
+    @POST
+    @Path("postServiceConsumesJsonProducesJson")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response postServiceConsumesJsonProducesJson(DataObject data) {
+        return Response.ok(new DetailsObject(data.getStringValue(), new int[] {1,2,3})).build();
+    }
 }

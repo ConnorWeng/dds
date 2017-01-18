@@ -92,6 +92,14 @@ public class RestSupportIntegrationTest extends RestSupport {
         assertFalse(result.isError());
     }
 
+    @Test
+    public void postServiceConsumesJsonProducesJson() throws DDSRestRPCException {
+        DataObject dataObject = new DataObject();
+        dataObject.setStringValue("中文");
+        DetailsObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesJsonProducesJson", MediaType.APPLICATION_JSON_TYPE, DetailsObject.class, dataObject);
+        assertEquals(dataObject.getStringValue(), result.getName());
+    }
+
     @AfterClass
     public static void tearDown() {
         executorService.shutdown();

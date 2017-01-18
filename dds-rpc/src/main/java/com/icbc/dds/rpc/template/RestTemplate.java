@@ -135,6 +135,10 @@ public class RestTemplate {
                 form.add(key, entityMap.get(key));
             }
             response = builder.post(ClientResponse.class, form);
+        } else if (entity != null) {
+            builder.type(MediaType.APPLICATION_JSON_TYPE);
+            builder.entity(entity);
+            response = builder.post(ClientResponse.class);
         } else {
             response = builder.post(ClientResponse.class);
         }
