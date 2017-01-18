@@ -72,4 +72,12 @@ public class RestTestServices {
     public Response postServiceConsumesMapProducesJson(Map<String, Boolean> dataMap) {
         return Response.ok(new ReturnObject(dataMap.get("param1"), "中文")).build();
     }
+
+    @POST
+    @Path("postServiceConsumesListProducesJson")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response postServiceConsumesListProducesJson(List<DataObject> dataObjects) {
+        return Response.ok(new ReturnObject(false, dataObjects.get(1).getDeftailsObject().getName())).build();
+    }
 }

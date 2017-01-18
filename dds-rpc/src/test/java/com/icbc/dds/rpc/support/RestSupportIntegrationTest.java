@@ -17,7 +17,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -106,6 +108,18 @@ public class RestSupportIntegrationTest extends RestSupport {
         dataMap.put("param1", false);
         ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesMapProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_JSON_TYPE, ReturnObject.class, dataMap);
         assertEquals(false, result.isError());
+        assertEquals("中文", result.getMessage());
+    }
+
+    @Test
+    public void postServiceConsumesListProducesJson() throws DDSRestRPCException {
+        List<DataObject> dataObjects = new ArrayList<DataObject>();
+        DataObject dataObject1 = new DataObject();
+        dataObjects.add(dataObject1);
+        DataObject dataObject2 = new DataObject();
+        dataObject2.setDeftailsObject(new DetailsObject("中文", new int[] {}));
+        dataObjects.add(dataObject2);
+        ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesListProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_JSON_TYPE, ReturnObject.class, dataObjects);
         assertEquals("中文", result.getMessage());
     }
 
