@@ -136,7 +136,8 @@ public class RestTemplate {
             }
             response = builder.post(ClientResponse.class, form);
         } else if (entity != null) {
-            builder.type(MediaType.APPLICATION_JSON_TYPE);
+            // TODO: 18/01/2017 应该对type做合法性校验
+            builder.type(sendMediaType);
             builder.entity(entity);
             response = builder.post(ClientResponse.class);
         } else {
@@ -144,7 +145,11 @@ public class RestTemplate {
         }
         int status = response.getStatus();
         metrics.tickStop(metricsName, status < 400);
-        return response.getEntity(responseType);
+        if (responseType.equals(ClientResponse.class)) {
+            return (T) response;
+        } else {
+            return response.getEntity(responseType);
+        }
     }
 
     private MultivaluedMap prepareParams(String... query) {

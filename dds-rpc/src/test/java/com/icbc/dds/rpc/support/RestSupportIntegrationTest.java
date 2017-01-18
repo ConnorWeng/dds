@@ -9,6 +9,7 @@ import com.icbc.dds.rpc.pojo.DataObject;
 import com.icbc.dds.rpc.pojo.DetailsObject;
 import com.icbc.dds.rpc.pojo.ReturnObject;
 import com.icbc.dds.rpc.template.RestTemplate;
+import com.sun.jersey.api.client.ClientResponse;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -17,10 +18,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.ws.rs.core.MediaType;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -130,13 +128,24 @@ public class RestSupportIntegrationTest extends RestSupport {
     @Test
     public void postServiceConsumesFormProducesStream() throws DDSRestRPCException, IOException {
         Map<String, String> form = new HashMap<String, String>();
-        form.put("param1", "不管你信不信");
+        form.put("param1", "中文");
         form.put("param2", "55555555");
         InputStream inputStream = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesFormProducesStream", MediaType.APPLICATION_OCTET_STREAM_TYPE, MediaType.APPLICATION_FORM_URLENCODED_TYPE, InputStream.class, form);
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = bufferedReader.readLine();
         bufferedReader.close();
-        assertEquals("不管你信不信! I am a stream. It's amazing!", line);
+        assertEquals("中文! I am a stream. It's amazing!", line);
+    }
+
+    @Test
+    public void postServiceConsumesStreamWithFieldProducesStreamWithField() throws DDSRestRPCException, IOException {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream("中文! I am a stream. It's amazing!\n".getBytes());
+        ClientResponse response = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesStreamWithFieldProducesStreamWithField/Smile", MediaType.APPLICATION_OCTET_STREAM_TYPE, MediaType.APPLICATION_OCTET_STREAM_TYPE, ClientResponse.class, byteArrayInputStream);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getEntityInputStream()));
+        String line = bufferedReader.readLine();
+        assertEquals("Smile! 中文! I am a stream. It's amazing!", line);
+        String field = response.getHeaders().getFirst("custom-header-field");
+        assertEquals("looks fine!", field);
     }
 
     @AfterClass

@@ -9,10 +9,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -100,5 +97,28 @@ public class RestTestServices {
             }
         };
         return Response.ok(streamingOutput).build();
+    }
+
+    @POST
+    @Path("postServiceConsumesStreamWithFieldProducesStreamWithField/{streamName}")
+    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response postServiceConsumesStreamWithFieldProducesStreamWithField(@PathParam("streamName") final String streamName, InputStream inputStream) {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        final String line;
+        try {
+            line = bufferedReader.readLine();
+        } catch (IOException e) {
+            throw new WebApplicationException(e);
+        }
+        StreamingOutput streamingOutput = new StreamingOutput() {
+            @Override
+            public void write(OutputStream os) throws IOException, WebApplicationException {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os));
+                bufferedWriter.write(streamName + "! " + line);
+                bufferedWriter.flush();
+            }
+        };
+        return Response.ok(streamingOutput).header("custom-header-field", "looks fine!").build();
     }
 }
