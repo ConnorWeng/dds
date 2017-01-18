@@ -32,7 +32,7 @@ public class DDSServerRunner implements ApplicationContextAware, CommandLineRunn
         tomcat.setPort(Integer.valueOf(port));
         Context context = tomcat.addContext("", null);
         tomcat.addServlet(context, "jersey-container-servlet", resourceConfig());
-        context.addServletMapping("/", "jersey-container-servlet");
+        context.addServletMapping("/*", "jersey-container-servlet");
 
         tomcat.start();
         tomcat.getServer().await();
