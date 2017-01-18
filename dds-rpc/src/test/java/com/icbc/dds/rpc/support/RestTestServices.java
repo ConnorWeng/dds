@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kfzx-wengxj on 18/01/2017.
@@ -62,5 +63,13 @@ public class RestTestServices {
     @Produces(MediaType.APPLICATION_JSON)
     public Response postServiceConsumesJsonProducesJson(DataObject data) {
         return Response.ok(new DetailsObject(data.getStringValue(), new int[] {1,2,3})).build();
+    }
+
+    @POST
+    @Path("postServiceConsumesMapProducesJson")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response postServiceConsumesMapProducesJson(Map<String, Boolean> dataMap) {
+        return Response.ok(new ReturnObject(dataMap.get("param1"), "中文")).build();
     }
 }

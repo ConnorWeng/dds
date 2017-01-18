@@ -78,7 +78,7 @@ public class RestSupportIntegrationTest extends RestSupport {
 
     @Test
     public void postServiceConsumesStringProducesString() throws DDSRestRPCException {
-        String result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesStringProducesString", MediaType.TEXT_PLAIN_TYPE, String.class, null, "param1", "ok", "param2", "中文");
+        String result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesStringProducesString", MediaType.TEXT_PLAIN_TYPE, MediaType.TEXT_PLAIN_TYPE, String.class, null, "param1", "ok", "param2", "中文");
         assertEquals("ok 中文", result);
     }
 
@@ -87,7 +87,7 @@ public class RestSupportIntegrationTest extends RestSupport {
         Map<String, String> formMap = new HashMap<String, String>();
         formMap.put("param1", "中文");
         formMap.put("param2", "false");
-        ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesFormProducesJson", MediaType.APPLICATION_JSON_TYPE, ReturnObject.class, formMap);
+        ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesFormProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_FORM_URLENCODED_TYPE, ReturnObject.class, formMap);
         assertEquals(result.getMessage(), "中文");
         assertFalse(result.isError());
     }
@@ -96,8 +96,17 @@ public class RestSupportIntegrationTest extends RestSupport {
     public void postServiceConsumesJsonProducesJson() throws DDSRestRPCException {
         DataObject dataObject = new DataObject();
         dataObject.setStringValue("中文");
-        DetailsObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesJsonProducesJson", MediaType.APPLICATION_JSON_TYPE, DetailsObject.class, dataObject);
+        DetailsObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesJsonProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_JSON_TYPE, DetailsObject.class, dataObject);
         assertEquals(dataObject.getStringValue(), result.getName());
+    }
+
+    @Test
+    public void postServiceConsumesMapProducesJson() throws DDSRestRPCException {
+        Map<String, Boolean> dataMap = new HashMap<String, Boolean>();
+        dataMap.put("param1", false);
+        ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesMapProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_JSON_TYPE, ReturnObject.class, dataMap);
+        assertEquals(false, result.isError());
+        assertEquals("中文", result.getMessage());
     }
 
     @AfterClass
