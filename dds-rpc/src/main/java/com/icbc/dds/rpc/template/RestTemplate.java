@@ -97,6 +97,22 @@ public class RestTemplate {
         return this.cud("POST", ipAddr, port, path, acceptMediaType, sendMediaType, responseType, entity, query);
     }
 
+    public <T> T put(String appName, String path, MediaType acceptMediaType, MediaType sendMediaType, Class<T> responseType, Object entity, String... query) throws DDSRestRPCException {
+        return this.cud("PUT", appName, path, acceptMediaType, sendMediaType, responseType, entity, query);
+    }
+
+    public <T> T put(String ipAddr, int port, String path, MediaType acceptMediaType, MediaType sendMediaType, Class<T> responseType, Object entity, String... query) {
+        return this.cud("PUT", ipAddr, port, path, acceptMediaType, sendMediaType, responseType, entity, query);
+    }
+
+    public <T> T delete(String appName, String path, MediaType acceptMediaType, MediaType sendMediaType, Class<T> responseType, Object entity, String... query) throws DDSRestRPCException {
+        return this.cud("DELETE", appName, path, acceptMediaType, sendMediaType, responseType, entity, query);
+    }
+
+    public <T> T delete(String ipAddr, int port, String path, MediaType acceptMediaType, MediaType sendMediaType, Class<T> responseType, Object entity, String... query) {
+        return this.cud("DELETE", ipAddr, port, path, acceptMediaType, sendMediaType, responseType, entity, query);
+    }
+
     public <T> T cud(String method, String appName, String path, MediaType acceptMediaType, MediaType sendMediaType, Class<T> responseType, Object entity, String... query) throws DDSRestRPCException {
         return this.cud(method, appName, path, acceptMediaType, sendMediaType, prepareParams(query), entity, responseType);
     }
