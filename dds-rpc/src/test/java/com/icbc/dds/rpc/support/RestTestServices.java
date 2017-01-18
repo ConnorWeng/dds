@@ -8,6 +8,11 @@ import com.icbc.dds.springboot.annotation.DDSService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -79,5 +84,21 @@ public class RestTestServices {
     @Produces(MediaType.APPLICATION_JSON)
     public Response postServiceConsumesListProducesJson(List<DataObject> dataObjects) {
         return Response.ok(new ReturnObject(false, dataObjects.get(1).getDeftailsObject().getName())).build();
+    }
+
+    @POST
+    @Path("postServiceConsumesFormProducesStream")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response postServiceConsumesFormProducesStream(@FormParam("param1") final String param1, @FormParam("param2") int param2) {
+        StreamingOutput streamingOutput = new StreamingOutput() {
+            @Override
+            public void write(OutputStream os) throws IOException, WebApplicationException {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os));
+                bufferedWriter.write(String.format("%s! I am a stream. It's amazing!", param1));
+                bufferedWriter.flush();
+            }
+        };
+        return Response.ok(streamingOutput).build();
     }
 }

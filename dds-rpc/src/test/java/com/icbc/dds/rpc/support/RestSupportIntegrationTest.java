@@ -17,6 +17,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.ws.rs.core.MediaType;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -121,6 +125,18 @@ public class RestSupportIntegrationTest extends RestSupport {
         dataObjects.add(dataObject2);
         ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesListProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_JSON_TYPE, ReturnObject.class, dataObjects);
         assertEquals("中文", result.getMessage());
+    }
+
+    @Test
+    public void postServiceConsumesFormProducesStream() throws DDSRestRPCException, IOException {
+        Map<String, String> form = new HashMap<String, String>();
+        form.put("param1", "不管你信不信");
+        form.put("param2", "55555555");
+        InputStream inputStream = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesFormProducesStream", MediaType.APPLICATION_OCTET_STREAM_TYPE, MediaType.APPLICATION_FORM_URLENCODED_TYPE, InputStream.class, form);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        String line = bufferedReader.readLine();
+        bufferedReader.close();
+        assertEquals("不管你信不信! I am a stream. It's amazing!", line);
     }
 
     @AfterClass
