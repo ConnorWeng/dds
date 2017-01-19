@@ -10,6 +10,7 @@ import com.icbc.dds.rpc.pojo.DetailsObject;
 import com.icbc.dds.rpc.pojo.ReturnObject;
 import com.icbc.dds.rpc.template.RestTemplate;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.multipart.FormDataMultiPart;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -146,6 +147,15 @@ public class RestSupportIntegrationTest extends RestSupport {
         assertEquals("Smile! 中文! I am a stream. It's amazing!", line);
         String field = response.getHeaders().getFirst("custom-header-field");
         assertEquals("looks fine!", field);
+    }
+
+    @Test
+    public void postServiceConsumesMultiPartProducesJson() throws DDSRestRPCException {
+        FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
+        formDataMultiPart.field("field1", "value1")
+                .field("field2", "value2");
+        ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesMultiPartProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.MULTIPART_FORM_DATA_TYPE, ReturnObject.class, formDataMultiPart);
+        assertEquals("value1", result.getMessage());
     }
 
     @AfterClass

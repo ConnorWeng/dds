@@ -4,6 +4,7 @@ import com.icbc.dds.rpc.pojo.DataObject;
 import com.icbc.dds.rpc.pojo.DetailsObject;
 import com.icbc.dds.rpc.pojo.ReturnObject;
 import com.icbc.dds.springboot.annotation.DDSService;
+import com.sun.jersey.multipart.FormDataParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -120,5 +121,13 @@ public class RestTestServices {
             }
         };
         return Response.ok(streamingOutput).header("custom-header-field", "looks fine!").build();
+    }
+
+    @POST
+    @Path("postServiceConsumesMultiPartProducesJson")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response postServiceConsumesMultiPartProducesJson(@FormDataParam("field1") final String field1, @FormDataParam("field2") final String field2) {
+        return Response.ok(new ReturnObject(false, field1)).build();
     }
 }
