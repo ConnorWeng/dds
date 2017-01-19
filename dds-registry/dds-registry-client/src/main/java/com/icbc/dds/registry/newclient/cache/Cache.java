@@ -1,4 +1,4 @@
-package com.icbc.dds.registry.client.cache;
+package com.icbc.dds.registry.newclient.cache;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,17 +9,16 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.icbc.dds.registry.client.common.Constants;
-import com.icbc.dds.registry.client.pojo.Application;
-import com.icbc.dds.registry.client.pojo.Instance;
-import com.icbc.dds.registry.client.pojo.InstanceInfo;
-import com.icbc.dds.registry.client.transport.EurekaClient;
+import com.icbc.dds.registry.newclient.common.Constants;
+import com.icbc.dds.registry.newclient.pojo.ApplicationWrapper;
+import com.icbc.dds.registry.newclient.pojo.InstanceWrapper;
+import com.icbc.dds.registry.newclient.transport.EurekaClient;
 
 public class Cache {
 	private static final Logger logger = LoggerFactory.getLogger(Cache.class);
 
 	private Map<String, Long> appUpdateTimeMap = new HashMap<String, Long>(); // 记录每个服务缓存信息的更新时间
-	private Map<String, List<InstanceInfo>> cache = new HashMap<String, List<InstanceInfo>>(); // 缓存
+	private Map<String, List<InstanceWrapper>> cache = new HashMap<String, List<InstanceWrapper>>(); // 缓存
 	private ThreadLocal<Long> threadExpireMap = new ThreadLocal<Long>() { // 线程园区优先超时时间
 		@Override
 		protected Long initialValue() {
@@ -32,43 +31,38 @@ public class Cache {
 	private String localZone;
 	private String remoteZone = "other";
 
-	public Cache(EurekaClient eurekaClient, List<String> apps, String localZone) {
+	public Cache(EurekaClient eurekaClient, String localZone) {
 		this.eurekaClient = eurekaClient;
 		this.localZone = localZone;
-		for (String app : apps) {
-			appUpdateTimeMap.put(app, Constants.DEFAULT_UPDATE_TIME);
-		}
 	}
 
 	private synchronized void refeshCache(String app, long currentTime) {
-		if (currentTime - appUpdateTimeMap.get(app) > expireTime) {
+		if (!appUpdateTimeMap.containsKey(app) || currentTime - appUpdateTimeMap.get(app) > expireTime) {
 			try {
-				Application application = this.eurekaClient.getApp(app);
-				if (application == null) {
-					throw new Exception();
-				}
-				List<InstanceInfo> instances = application.getInstance();
-				for (InstanceInfo instance : instances) {
-					String key = (instance.getApp() + instance.getVipAddress()).toLowerCase();
+				ApplicationWrapper application = this.eurekaClient.getApp(app);
+				List<InstanceWrapper> instances = application.getInstanceInfos();
+				for (InstanceWrapper instance : instances) {
+					String key = (app + instance.getVipAddress()).toLowerCase();
 					if (!localZone.equalsIgnoreCase(instance.getVipAddress())) {
-						key = (instance.getApp() + remoteZone).toLowerCase();
+						key = (app + remoteZone).toLowerCase();
 					}
 					if (!cache.containsKey(key)) {
-						cache.put(key, new ArrayList<InstanceInfo>());
+						cache.put(key, new ArrayList<InstanceWrapper>());
 					}
 					cache.get(key).add(instance);
 				}
 				appUpdateTimeMap.put(app, currentTime); // 调整更新时间
 				logger.info("服务{}缓存更新成功", app);
-			} catch (Throwable e) {
-				logger.info("本次服务{}缓存更新失败", app);
+			} catch (Exception e) {
+				logger.info("本次服务{}缓存更新失败，失败信息：{}", app, e);
 			}
 		}
 	}
 
-	public InstanceInfo getNextInstance(String app) {
+	public InstanceWrapper getNextInstance(String app) {
 		long currentTime = System.currentTimeMillis();
-		if (currentTime - appUpdateTimeMap.get(app) > expireTime) { // 缓存过时
+
+		if (!appUpdateTimeMap.containsKey(app) || currentTime - appUpdateTimeMap.get(app) > expireTime) { // 缓存过时
 			refeshCache(app, currentTime); // 更新缓存
 		}
 
@@ -92,8 +86,8 @@ public class Cache {
 		}
 	}
 
-	private InstanceInfo getRandomInstanceFromCache(String key) {
-		List<InstanceInfo> sameZoneInstances = cache.get(key);
+	private InstanceWrapper getRandomInstanceFromCache(String key) {
+		List<InstanceWrapper> sameZoneInstances = cache.get(key);
 		Random random = new Random();
 		return sameZoneInstances.get(random.nextInt(sameZoneInstances.size()));
 	}
