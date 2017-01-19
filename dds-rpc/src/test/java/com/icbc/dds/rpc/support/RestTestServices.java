@@ -104,13 +104,15 @@ public class RestTestServices {
     @Path("postServiceConsumesStreamWithFieldProducesStreamWithField/{streamName}")
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response postServiceConsumesStreamWithFieldProducesStreamWithField(@PathParam("streamName") final String streamName, InputStream inputStream) {
+    public Response postServiceConsumesStreamWithFieldProducesStreamWithField(@PathParam("streamName") final String streamName, InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         final String line;
         try {
             line = bufferedReader.readLine();
         } catch (IOException e) {
             throw new WebApplicationException(e);
+        } finally {
+            bufferedReader.close();
         }
         StreamingOutput streamingOutput = new StreamingOutput() {
             @Override
@@ -129,5 +131,22 @@ public class RestTestServices {
     @Produces(MediaType.APPLICATION_JSON)
     public Response postServiceConsumesMultiPartProducesJson(@FormDataParam("field1") final String field1, @FormDataParam("field2") final String field2) {
         return Response.ok(new ReturnObject(false, field1)).build();
+    }
+
+    @POST
+    @Path("postServiceConsumesMultiPartWithStreamProducesJson")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response postServiceConsumesMultiPartWithStreamProducesJson(@FormDataParam("field") String field, @FormDataParam("stream") InputStream inputStream) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        String line;
+        try {
+            line = bufferedReader.readLine();
+        } catch (IOException e) {
+            throw new WebApplicationException(e);
+        } finally {
+            bufferedReader.close();
+        }
+        return Response.ok(new ReturnObject(false, line)).build();
     }
 }

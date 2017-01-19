@@ -10,6 +10,7 @@ import com.icbc.dds.rpc.pojo.DetailsObject;
 import com.icbc.dds.rpc.pojo.ReturnObject;
 import com.icbc.dds.rpc.template.RestTemplate;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -156,6 +157,17 @@ public class RestSupportIntegrationTest extends RestSupport {
                 .field("field2", "value2");
         ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesMultiPartProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.MULTIPART_FORM_DATA_TYPE, ReturnObject.class, formDataMultiPart);
         assertEquals("value1", result.getMessage());
+    }
+
+    @Test
+    public void postServiceConsumesMultiPartWithStreamProducesJson() throws DDSRestRPCException {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream("中文! I am a stream. It's amazing!\n".getBytes());
+        FormDataBodyPart formDataBodyPart = new FormDataBodyPart("stream", byteArrayInputStream, MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
+        formDataMultiPart.field("field", "value");
+        formDataMultiPart.bodyPart(formDataBodyPart);
+        ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesMultiPartWithStreamProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.MULTIPART_FORM_DATA_TYPE, ReturnObject.class, formDataMultiPart);
+        assertEquals("中文! I am a stream. It's amazing!", result.getMessage());
     }
 
     @AfterClass
