@@ -176,6 +176,14 @@ public class RestTemplate {
         }
     }
 
+    public Builder service(String appName) {
+        return new Builder(this, appName);
+    }
+
+    public Builder service(String ip, int port) {
+        return new Builder(this, ip, port);
+    }
+
     private MultivaluedMap prepareParams(String... query) {
         if (query.length % 2 != 0) {
             throw new IllegalArgumentException("query length must be even");
@@ -185,5 +193,96 @@ public class RestTemplate {
             params.add(query[i], query[i+1]);
         }
         return params;
+    }
+
+    public final class Builder {
+        private RestTemplate restTemplate;
+        private String appName;
+        private String ipAddr;
+        private int port;
+        private String path;
+        private MediaType acceptMediaType;
+        private MediaType sendMediaType;
+        private String[] query = new String[]{};
+        private Object entity;
+
+        public Builder(RestTemplate restTemplate, String appName) {
+            this.restTemplate = restTemplate;
+            this.appName = appName;
+        }
+
+        public Builder(RestTemplate restTemplate, String ip, int port) {
+            this.restTemplate = restTemplate;
+            this.ipAddr = ip;
+            this.port = port;
+        }
+
+        public Builder ip(String ipAddr) {
+            this.ipAddr = ipAddr;
+            return this;
+        }
+
+        public Builder port(int port) {
+            this.port = port;
+            return this;
+        }
+
+        public Builder path(String path) {
+            this.path = path;
+            return this;
+        }
+
+        public Builder accept(MediaType mediaType) {
+            this.acceptMediaType = mediaType;
+            return this;
+        }
+
+        public Builder type(MediaType mediaType) {
+            this.sendMediaType = mediaType;
+            return this;
+        }
+
+        public Builder query(String... query) {
+            this.query = query;
+            return this;
+        }
+
+        public Builder entity(Object entity) {
+            this.entity = entity;
+            return this;
+        }
+
+        // TODO: 19/01/2017 应该做合法性校验
+        public <T> T get(Class<T> responseType) throws DDSRestRPCException {
+            if (appName != null) {
+                return this.restTemplate.get(appName, path, acceptMediaType, responseType, query);
+            } else {
+                return this.restTemplate.get(ipAddr, port, path, acceptMediaType, responseType, query);
+            }
+        }
+
+        public <T> T post(Class<T> responseType) throws DDSRestRPCException {
+            if (appName != null) {
+                return this.restTemplate.post(appName, path, acceptMediaType, sendMediaType, responseType, entity, query);
+            } else {
+                return this.restTemplate.post(ipAddr, port, path, acceptMediaType, sendMediaType, responseType, entity, query);
+            }
+        }
+
+        public <T> T put(Class<T> responseType) throws DDSRestRPCException {
+            if (appName != null) {
+                return this.restTemplate.put(appName, path, acceptMediaType, sendMediaType, responseType, entity, query);
+            } else {
+                return this.restTemplate.put(ipAddr, port, path, acceptMediaType, sendMediaType, responseType, entity, query);
+            }
+        }
+
+        public <T> T delete(Class<T> responseType) throws DDSRestRPCException {
+            if (appName != null) {
+                return this.restTemplate.delete(appName, path, acceptMediaType, sendMediaType, responseType, entity, query);
+            } else {
+                return this.restTemplate.delete(ipAddr, port, path, acceptMediaType, sendMediaType, responseType, entity, query);
+            }
+        }
     }
 }

@@ -69,13 +69,23 @@ public class RestSupportIntegrationTest extends RestSupport {
 
     @Test
     public void getServiceConsumesStringProducesString() throws DDSRestRPCException {
-        String result = restSupport.getRestTemplate().get("RestTestServices", "/getServiceConsumesStringProducesString", MediaType.TEXT_PLAIN_TYPE, String.class, "param1", "ok", "param2", "中文");
+        String result = restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("/getServiceConsumesStringProducesString")
+                .accept(MediaType.TEXT_PLAIN_TYPE)
+                .query("param1", "ok", "param2", "中文")
+                .get(String.class);
         assertEquals("ok 中文", result);
     }
 
     @Test
     public void getServiceConsumesStringProducesJson() throws DDSRestRPCException {
-        DataObject dataObject = restSupport.getRestTemplate().get("RestTestServices", "/getServiceConsumesStringProducesJson", MediaType.APPLICATION_JSON_TYPE, DataObject.class, "param1", "中文", "param2", "100");
+        DataObject dataObject = restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("/getServiceConsumesStringProducesJson")
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .query("param1", "中文", "param2", "100")
+                .get(DataObject.class);
         assertEquals("中文", dataObject.getStringValue());
         assertEquals(100, dataObject.getIntValue());
         assertEquals(new DetailsObject("中文", new int[] {1, 2, 3}), dataObject.getDeftailsObject());
@@ -84,7 +94,13 @@ public class RestSupportIntegrationTest extends RestSupport {
 
     @Test
     public void postServiceConsumesStringProducesString() throws DDSRestRPCException {
-        String result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesStringProducesString", MediaType.TEXT_PLAIN_TYPE, MediaType.TEXT_PLAIN_TYPE, String.class, null, "param1", "ok", "param2", "中文");
+        String result = restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("/postServiceConsumesStringProducesString")
+                .accept(MediaType.TEXT_PLAIN_TYPE)
+                .type(MediaType.TEXT_PLAIN_TYPE)
+                .query("param1", "ok", "param2", "中文")
+                .post(String.class);
         assertEquals("ok 中文", result);
     }
 
@@ -93,7 +109,13 @@ public class RestSupportIntegrationTest extends RestSupport {
         Map<String, String> formMap = new HashMap<String, String>();
         formMap.put("param1", "中文");
         formMap.put("param2", "false");
-        ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesFormProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_FORM_URLENCODED_TYPE, ReturnObject.class, formMap);
+        ReturnObject result = restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("/postServiceConsumesFormProducesJson")
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+                .entity(formMap)
+                .post(ReturnObject.class);
         assertEquals(result.getMessage(), "中文");
         assertFalse(result.isError());
     }
@@ -102,7 +124,13 @@ public class RestSupportIntegrationTest extends RestSupport {
     public void postServiceConsumesJsonProducesJson() throws DDSRestRPCException {
         DataObject dataObject = new DataObject();
         dataObject.setStringValue("中文");
-        DetailsObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesJsonProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_JSON_TYPE, DetailsObject.class, dataObject);
+        DetailsObject result = restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("/postServiceConsumesJsonProducesJson")
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity(dataObject)
+                .post(DetailsObject.class);
         assertEquals(dataObject.getStringValue(), result.getName());
     }
 
@@ -110,7 +138,13 @@ public class RestSupportIntegrationTest extends RestSupport {
     public void postServiceConsumesMapProducesJson() throws DDSRestRPCException {
         Map<String, Boolean> dataMap = new HashMap<String, Boolean>();
         dataMap.put("param1", false);
-        ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesMapProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_JSON_TYPE, ReturnObject.class, dataMap);
+        ReturnObject result = restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("/postServiceConsumesMapProducesJson")
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity(dataMap)
+                .post(ReturnObject.class);
         assertEquals(false, result.isError());
         assertEquals("中文", result.getMessage());
     }
@@ -123,7 +157,13 @@ public class RestSupportIntegrationTest extends RestSupport {
         DataObject dataObject2 = new DataObject();
         dataObject2.setDeftailsObject(new DetailsObject("中文", new int[] {}));
         dataObjects.add(dataObject2);
-        ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesListProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_JSON_TYPE, ReturnObject.class, dataObjects);
+        ReturnObject result = restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("/postServiceConsumesListProducesJson")
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity(dataObjects)
+                .post(ReturnObject.class);
         assertEquals("中文", result.getMessage());
     }
 
@@ -132,7 +172,13 @@ public class RestSupportIntegrationTest extends RestSupport {
         Map<String, String> form = new HashMap<String, String>();
         form.put("param1", "中文");
         form.put("param2", "55555555");
-        InputStream inputStream = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesFormProducesStream", MediaType.APPLICATION_OCTET_STREAM_TYPE, MediaType.APPLICATION_FORM_URLENCODED_TYPE, InputStream.class, form);
+        InputStream inputStream = restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("/postServiceConsumesFormProducesStream")
+                .accept(MediaType.APPLICATION_OCTET_STREAM_TYPE)
+                .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+                .entity(form)
+                .post(InputStream.class);
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = bufferedReader.readLine();
         bufferedReader.close();
@@ -142,7 +188,13 @@ public class RestSupportIntegrationTest extends RestSupport {
     @Test
     public void postServiceConsumesStreamWithFieldProducesStreamWithField() throws DDSRestRPCException, IOException {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream("中文! I am a stream. It's amazing!\n".getBytes());
-        ClientResponse response = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesStreamWithFieldProducesStreamWithField/Smile", MediaType.APPLICATION_OCTET_STREAM_TYPE, MediaType.APPLICATION_OCTET_STREAM_TYPE, ClientResponse.class, byteArrayInputStream);
+        ClientResponse response = restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("/postServiceConsumesStreamWithFieldProducesStreamWithField/Smile")
+                .accept(MediaType.APPLICATION_OCTET_STREAM_TYPE)
+                .type(MediaType.APPLICATION_OCTET_STREAM_TYPE)
+                .entity(byteArrayInputStream)
+                .post(ClientResponse.class);
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getEntityInputStream()));
         String line = bufferedReader.readLine();
         assertEquals("Smile! 中文! I am a stream. It's amazing!", line);
@@ -155,7 +207,13 @@ public class RestSupportIntegrationTest extends RestSupport {
         FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
         formDataMultiPart.field("field1", "value1")
                 .field("field2", "value2");
-        ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesMultiPartProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.MULTIPART_FORM_DATA_TYPE, ReturnObject.class, formDataMultiPart);
+        ReturnObject result = restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("/postServiceConsumesMultiPartProducesJson")
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.MULTIPART_FORM_DATA_TYPE)
+                .entity(formDataMultiPart)
+                .post(ReturnObject.class);
         assertEquals("value1", result.getMessage());
     }
 
@@ -166,7 +224,13 @@ public class RestSupportIntegrationTest extends RestSupport {
         FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
         formDataMultiPart.field("field", "value");
         formDataMultiPart.bodyPart(formDataBodyPart);
-        ReturnObject result = restSupport.getRestTemplate().post("RestTestServices", "/postServiceConsumesMultiPartWithStreamProducesJson", MediaType.APPLICATION_JSON_TYPE, MediaType.MULTIPART_FORM_DATA_TYPE, ReturnObject.class, formDataMultiPart);
+        ReturnObject result = restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("/postServiceConsumesMultiPartWithStreamProducesJson")
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.MULTIPART_FORM_DATA_TYPE)
+                .entity(formDataMultiPart)
+                .post(ReturnObject.class);
         assertEquals("中文! I am a stream. It's amazing!", result.getMessage());
     }
 
