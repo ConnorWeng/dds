@@ -4,7 +4,7 @@ public class Constants {
 	public static final String DEFAULT_CONF_FILE_NAME = "dds-client.conf";
 	
 	public static final String DEFAULT_PROTOCOL = "http://";
-	public static final String DEFAULT_EUREKA_CONTEXT = "/eureka/v2/apps/";
+	public static final String DEFAULT_EUREKA_CONTEXT = "/eureka/apps/";
 
 	public static final String DEFAULT_SEPARATOR = ","; // 默认分隔符
 	public static final int DEFAULT_RETRY_TIMES = 6; // 注册重试次数

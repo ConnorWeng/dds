@@ -3,6 +3,7 @@ package com.icbc.dds.registry.client.unit;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.PropertyConfigurator;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import com.icbc.dds.api.exception.DDSRegistryException;
 import com.icbc.dds.registry.client.DDSClient;
 import com.icbc.dds.registry.client.pojo.InstanceInfo;
+import com.icbc.dds.registry.server.RegistryServer;
 
 public class DDSClientProviderUnitTest {
 	private String providerConf = "provider.conf";
@@ -63,12 +65,12 @@ public class DDSClientProviderUnitTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		init();
-		// Executors.newSingleThreadExecutor().submit(new Runnable() {
-		// @Override
-		// public void run() {
-		// RegistryServer.main(new String[] {});
-		// }
-		// }).get();
+		Executors.newSingleThreadExecutor().submit(new Runnable() {
+			@Override
+			public void run() {
+				RegistryServer.main(new String[] {});
+			}
+		}).get();
 	}
 
 	@Before

@@ -26,6 +26,11 @@
         	<version>${project.parent.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-logging-juli</artifactId>
+        	<scope>test</scope>
+        </dependency>
+        <dependency>
         	<groupId>com.icbc.dds</groupId>
         	<artifactId>dds-registry-server</artifactId>
         	<version>${project.parent.version}</version>

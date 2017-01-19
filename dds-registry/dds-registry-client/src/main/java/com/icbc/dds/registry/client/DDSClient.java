@@ -87,6 +87,7 @@ public class DDSClient implements RegistryClient {
 					if (e instanceof DDSResponseException || ++times >= retry) {
 						throw new DDSRegistryException("服务注册失败", e);
 					}
+					logger.error("第{}次服务注册失败，失败信息：{}", times, e);
 					try {
 						TimeUnit.MILLISECONDS.sleep(interval);
 					} catch (Exception interrupt) {
