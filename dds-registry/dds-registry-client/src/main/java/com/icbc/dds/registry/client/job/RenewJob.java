@@ -1,10 +1,10 @@
-package com.icbc.dds.registry.newclient.job;
+package com.icbc.dds.registry.client.job;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import com.icbc.dds.registry.newclient.common.Constants;
+import com.icbc.dds.registry.client.common.Constants;
 
 public class RenewJob {
 	private Timer timer;

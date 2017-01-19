@@ -1,14 +1,14 @@
-package com.icbc.dds.registry.newclient.job;
+package com.icbc.dds.registry.client.job;
 
 import java.util.TimerTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.icbc.dds.registry.newclient.pojo.InstanceInfo;
-import com.icbc.dds.registry.newclient.pojo.InstanceWrapper;
-import com.icbc.dds.registry.newclient.transport.DDSResponseException;
-import com.icbc.dds.registry.newclient.transport.EurekaClient;
+import com.icbc.dds.registry.client.pojo.InstanceInfo;
+import com.icbc.dds.registry.client.pojo.InstanceWrapper;
+import com.icbc.dds.registry.client.transport.DDSResponseException;
+import com.icbc.dds.registry.client.transport.EurekaClient;
 
 public class RenewTask extends TimerTask {
 	private static final Logger logger = LoggerFactory.getLogger(RenewTask.class);

@@ -1,4 +1,4 @@
-package com.icbc.dds.registry.newclient.cache;
+package com.icbc.dds.registry.client.cache;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,10 +9,10 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.icbc.dds.registry.newclient.common.Constants;
-import com.icbc.dds.registry.newclient.pojo.ApplicationWrapper;
-import com.icbc.dds.registry.newclient.pojo.InstanceWrapper;
-import com.icbc.dds.registry.newclient.transport.EurekaClient;
+import com.icbc.dds.registry.client.common.Constants;
+import com.icbc.dds.registry.client.pojo.ApplicationWrapper;
+import com.icbc.dds.registry.client.pojo.InstanceWrapper;
+import com.icbc.dds.registry.client.transport.EurekaClient;
 
 public class Cache {
 	private static final Logger logger = LoggerFactory.getLogger(Cache.class);

@@ -1,7 +1,7 @@
-package com.icbc.dds.registry.newclient.transport;
+package com.icbc.dds.registry.client.transport;
 
-import com.icbc.dds.registry.newclient.pojo.ApplicationWrapper;
-import com.icbc.dds.registry.newclient.pojo.InstanceInfo;
+import com.icbc.dds.registry.client.pojo.ApplicationWrapper;
+import com.icbc.dds.registry.client.pojo.InstanceInfo;
 
 public interface EurekaClient {
 

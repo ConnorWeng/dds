@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.icbc.dds.api.pojo.InstanceInfo;
-import com.icbc.dds.registry.newclient.DDSClient;
+import com.icbc.dds.registry.client.DDSClient;
 
 public class DDSClientTest {
 

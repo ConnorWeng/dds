@@ -1,4 +1,4 @@
-package com.icbc.dds.registry.newclient.common;
+package com.icbc.dds.registry.client.common;
 
 public class Constants {
 	public static final String DEFAULT_CONF_FILE_NAME = "dds-client.conf";

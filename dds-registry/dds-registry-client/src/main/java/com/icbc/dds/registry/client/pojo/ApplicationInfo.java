@@ -1,4 +1,4 @@
-package com.icbc.dds.registry.newclient.pojo;
+package com.icbc.dds.registry.client.pojo;
 
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;

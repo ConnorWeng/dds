@@ -1,4 +1,4 @@
-package com.icbc.dds.registry.newclient;
+package com.icbc.dds.registry.client;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -12,14 +12,14 @@ import org.slf4j.LoggerFactory;
 
 import com.icbc.dds.api.RegistryClient;
 import com.icbc.dds.api.exception.DDSRegistryException;
-import com.icbc.dds.registry.newclient.cache.Cache;
-import com.icbc.dds.registry.newclient.common.Constants;
-import com.icbc.dds.registry.newclient.job.RenewJob;
-import com.icbc.dds.registry.newclient.job.RenewTask;
-import com.icbc.dds.registry.newclient.pojo.InstanceInfo;
-import com.icbc.dds.registry.newclient.pojo.InstanceWrapper;
-import com.icbc.dds.registry.newclient.transport.DDSResponseException;
-import com.icbc.dds.registry.newclient.transport.JerseyEurekaClient;
+import com.icbc.dds.registry.client.cache.Cache;
+import com.icbc.dds.registry.client.common.Constants;
+import com.icbc.dds.registry.client.job.RenewJob;
+import com.icbc.dds.registry.client.job.RenewTask;
+import com.icbc.dds.registry.client.pojo.InstanceInfo;
+import com.icbc.dds.registry.client.pojo.InstanceWrapper;
+import com.icbc.dds.registry.client.transport.DDSResponseException;
+import com.icbc.dds.registry.client.transport.JerseyEurekaClient;
 
 public class DDSClient implements RegistryClient {
 	private static final Logger logger = LoggerFactory.getLogger(DDSClient.class);

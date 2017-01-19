@@ -1,4 +1,4 @@
-package com.icbc.dds.registry.newclient.pojo;
+package com.icbc.dds.registry.client.pojo;
 
 import java.util.List;
 

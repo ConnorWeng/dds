@@ -1,13 +1,13 @@
-package com.icbc.dds.registry.newclient.transport;
+package com.icbc.dds.registry.client.transport;
 
 import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 
-import com.icbc.dds.registry.newclient.common.Constants;
-import com.icbc.dds.registry.newclient.pojo.ApplicationInfo;
-import com.icbc.dds.registry.newclient.pojo.ApplicationWrapper;
-import com.icbc.dds.registry.newclient.pojo.InstanceInfo;
+import com.icbc.dds.registry.client.common.Constants;
+import com.icbc.dds.registry.client.pojo.ApplicationInfo;
+import com.icbc.dds.registry.client.pojo.ApplicationWrapper;
+import com.icbc.dds.registry.client.pojo.InstanceInfo;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.config.DefaultClientConfig;

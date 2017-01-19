@@ -1,4 +1,4 @@
-package com.icbc.dds.registry.newclient.transport;
+package com.icbc.dds.registry.client.transport;
 
 public class DDSResponseException extends RuntimeException {
 	public DDSResponseException(String msg) {
