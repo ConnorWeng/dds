@@ -25,7 +25,7 @@ public final class Metrics implements com.icbc.dds.api.Metrics {
 
     @Override
     public void tickStart(String name) {
-        contextMap.get().putIfAbsent(name, registry.timer(name).time());
+        contextMap.get().put(name, registry.timer(name).time());
     }
 
     @Override
