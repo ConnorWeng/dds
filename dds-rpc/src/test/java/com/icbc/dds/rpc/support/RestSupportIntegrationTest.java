@@ -248,6 +248,19 @@ public class RestSupportIntegrationTest extends RestSupport {
         assertEquals("中文", returnObject.getMessage());
     }
 
+    @Test
+    public void deleteServiceConsumesFormProducesJson() throws DDSRestRPCException {
+        Map<String, String> form = new HashMap<String, String>();
+        form.put("id", "abcde");
+        ReturnObject returnObject = this.restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+                .entity(form)
+                .delete(ReturnObject.class);
+        assertEquals("abcde", returnObject.getMessage());
+    }
+
     @AfterClass
     public static void tearDown() {
         executorService.shutdown();

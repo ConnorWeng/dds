@@ -157,4 +157,12 @@ public class RestTestServices {
     public Response putServiceConsumesJsonProducesJson(DataObject data) {
         return Response.ok(new ReturnObject(false, data.getStringValue())).build();
     }
+
+    @DELETE
+    @Path("deleteServiceConsumesFormProducesJson")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteServiceConsumesStringProducesJson(@FormParam("id") String id) {
+        return Response.ok(new ReturnObject(false, id)).build();
+    }
 }
