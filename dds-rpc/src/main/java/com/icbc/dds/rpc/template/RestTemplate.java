@@ -199,7 +199,7 @@ public class RestTemplate {
         private RestTemplate restTemplate;
         private String appName;
         private String ipAddr;
-        private int port;
+        private int port = 0;
         private String path;
         private MediaType acceptMediaType;
         private MediaType sendMediaType;
@@ -252,8 +252,8 @@ public class RestTemplate {
             return this;
         }
 
-        // TODO: 19/01/2017 应该做合法性校验
         public <T> T get(Class<T> responseType) throws DDSRestRPCException {
+            validate("GET");
             if (appName != null) {
                 return this.restTemplate.get(appName, path, acceptMediaType, responseType, query);
             } else {
@@ -262,6 +262,7 @@ public class RestTemplate {
         }
 
         public <T> T post(Class<T> responseType) throws DDSRestRPCException {
+            validate("POST");
             if (appName != null) {
                 return this.restTemplate.post(appName, path, acceptMediaType, sendMediaType, responseType, entity, query);
             } else {
@@ -270,6 +271,7 @@ public class RestTemplate {
         }
 
         public <T> T put(Class<T> responseType) throws DDSRestRPCException {
+            validate("PUT");
             if (appName != null) {
                 return this.restTemplate.put(appName, path, acceptMediaType, sendMediaType, responseType, entity, query);
             } else {
@@ -278,10 +280,29 @@ public class RestTemplate {
         }
 
         public <T> T delete(Class<T> responseType) throws DDSRestRPCException {
+            validate("DELETE");
             if (appName != null) {
                 return this.restTemplate.delete(appName, path, acceptMediaType, sendMediaType, responseType, entity, query);
             } else {
                 return this.restTemplate.delete(ipAddr, port, path, acceptMediaType, sendMediaType, responseType, entity, query);
+            }
+        }
+
+        private void validate(String method) {
+            if (this.appName == null && this.ipAddr == null) {
+                throw new IllegalArgumentException("服务名和ip地址不能同时为空");
+            }
+            if (this.ipAddr != null && this.port == 0) {
+                throw new IllegalArgumentException("端口不能为空");
+            }
+            if (this.path == null) {
+                throw new IllegalArgumentException("path不能为空");
+            }
+            if (this.acceptMediaType == null) {
+                throw new IllegalArgumentException("accept media type不能为空");
+            }
+            if (method != "GET" && this.sendMediaType == null) {
+                throw new IllegalArgumentException(String.format("使用%s方法时必须指定type", method));
             }
         }
     }
