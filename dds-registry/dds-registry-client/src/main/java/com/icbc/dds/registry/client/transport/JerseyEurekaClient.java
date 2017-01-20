@@ -25,7 +25,7 @@ public class JerseyEurekaClient implements EurekaClient {
 		clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
 		clientConfig.getClasses().add(JacksonJsonProvider.class);
 		this.client = Client.create(clientConfig);
-		client.addFilter(new GZIPContentEncodingFilter());
+//		client.addFilter(new GZIPContentEncodingFilter());
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class JerseyEurekaClient implements EurekaClient {
 				.entity(instanceInfo)
 				.post(ClientResponse.class);
 		if (response.getStatus() != 204) { // 204代表注册成功
-			throw new DDSResponseException("注册中心返回状态码：" + response.getStatus());
+			throw new DDSResponseException("注册中心返回状态码：" + response.getEntity(String.class));
 		}
 	}
 
