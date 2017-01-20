@@ -149,4 +149,12 @@ public class RestTestServices {
         }
         return Response.ok(new ReturnObject(false, line)).build();
     }
+
+    @PUT
+    @Path("putServiceConsumesJsonProducesJson")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response putServiceConsumesJsonProducesJson(DataObject data) {
+        return Response.ok(new ReturnObject(false, data.getStringValue())).build();
+    }
 }

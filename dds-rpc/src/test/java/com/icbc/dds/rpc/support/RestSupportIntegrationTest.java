@@ -234,6 +234,20 @@ public class RestSupportIntegrationTest extends RestSupport {
         assertEquals("中文! I am a stream. It's amazing!", result.getMessage());
     }
 
+    @Test
+    public void putServiceConsumesJsonProducesJson() throws DDSRestRPCException {
+        DataObject dataObject = new DataObject();
+        dataObject.setStringValue("中文");
+        ReturnObject returnObject = this.restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("putServiceConsumesJsonProducesJson")
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity(dataObject)
+                .put(ReturnObject.class);
+        assertEquals("中文", returnObject.getMessage());
+    }
+
     @AfterClass
     public static void tearDown() {
         executorService.shutdown();
