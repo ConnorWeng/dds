@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.icbc.dds.springboot.DDSAutoConfiguration
+com.icbc.dds.springboot.DDSAutoConfiguration,\
+com.icbc.dds.springboot.DDSRegistryConfiguration
