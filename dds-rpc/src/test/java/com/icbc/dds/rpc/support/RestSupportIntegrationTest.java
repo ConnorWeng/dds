@@ -9,6 +9,7 @@ import com.icbc.dds.rpc.pojo.DataObject;
 import com.icbc.dds.rpc.pojo.DetailsObject;
 import com.icbc.dds.rpc.pojo.ReturnObject;
 import com.icbc.dds.rpc.template.RestTemplate;
+import com.icbc.dds.springboot.annotation.DisableDDSClient;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
@@ -39,6 +40,7 @@ import static org.mockito.Mockito.when;
  * Created by kfzx-wengxj on 17/01/2017.
  */
 @SpringBootApplication
+@DisableDDSClient
 public class RestSupportIntegrationTest extends RestSupport {
     RegistryClient mockedRegistryClient = mock(RegistryClient.class);
     Metrics mockedMetrics = mock(Metrics.class);
