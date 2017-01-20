@@ -165,4 +165,12 @@ public class RestTestServices {
     public Response deleteServiceConsumesStringProducesJson(@FormParam("id") String id) {
         return Response.ok(new ReturnObject(false, id)).build();
     }
+
+    @DELETE
+    @Path("deleteServiceConsumesFormProducesJsonWithError")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteServiceConsumesFormProducesJsonWithError(@FormParam("id") String id) {
+        return Response.status(Response.Status.BAD_REQUEST).entity(new ReturnObject(true, "id无效")).build();
+    }
 }

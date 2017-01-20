@@ -31,6 +31,7 @@ import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -260,6 +261,24 @@ public class RestSupportIntegrationTest extends RestSupport {
                 .entity(form)
                 .delete(ReturnObject.class);
         assertEquals("abcde", returnObject.getMessage());
+    }
+
+    @Test
+    public void deleteServiceConsumesFormProducesJsonWithError() throws DDSRestRPCException {
+        Map<String, String> form = new HashMap<String, String>();
+        form.put("id", "abcde");
+        ClientResponse response = this.restSupport.getRestTemplate()
+                .service("RestTestServices")
+                .path("deleteServiceConsumesFormProducesJsonWithError")
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+                .entity(form)
+                .delete(ClientResponse.class);
+        int status = response.getStatus();
+        ReturnObject returnObject = response.getEntity(ReturnObject.class);
+        assertEquals(ClientResponse.Status.BAD_REQUEST.getStatusCode(), status);
+        assertTrue(returnObject.isError());
+        assertEquals("id无效", returnObject.getMessage());
     }
 
     @AfterClass
