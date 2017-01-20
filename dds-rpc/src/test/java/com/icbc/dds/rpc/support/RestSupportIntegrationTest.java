@@ -254,6 +254,7 @@ public class RestSupportIntegrationTest extends RestSupport {
         form.put("id", "abcde");
         ReturnObject returnObject = this.restSupport.getRestTemplate()
                 .service("RestTestServices")
+                .path("deleteServiceConsumesFormProducesJson")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
                 .entity(form)

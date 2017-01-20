@@ -160,7 +160,7 @@ public class RestTestServices {
 
     @DELETE
     @Path("deleteServiceConsumesFormProducesJson")
-    @Consumes(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteServiceConsumesStringProducesJson(@FormParam("id") String id) {
         return Response.ok(new ReturnObject(false, id)).build();
