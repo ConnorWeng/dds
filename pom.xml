@@ -21,6 +21,7 @@
         <module>dds-api</module>
         <module>dds-demo</module>
         <module>spring-boot-starter-dds</module>
+        <module>distribution</module>
     </modules>
 
     <dependencyManagement>
@@ -106,7 +107,29 @@
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>1.4.3.RELEASE</version>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/package.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
