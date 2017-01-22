@@ -11,5 +11,16 @@
 
     <artifactId>dds-message-client</artifactId>
 
-
+    <dependencies>
+    	<dependency>
+            <groupId>com.icbc.dds</groupId>
+            <artifactId>dds-rpc</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.icbc.dds</groupId>
+            <artifactId>spring-boot-starter-dds</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
 </project>
