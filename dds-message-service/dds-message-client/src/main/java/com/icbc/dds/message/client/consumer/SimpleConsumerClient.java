@@ -1,32 +1,38 @@
 package com.icbc.dds.message.client.consumer;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 import com.icbc.dds.api.exception.DDSRestRPCException;
-import com.icbc.dds.message.common.Constants;
 import com.icbc.dds.message.common.HeartbeatTask;
 import com.icbc.dds.message.common.Message;
 import com.icbc.dds.rpc.factory.SupportFactory;
 
 public class SimpleConsumerClient {
-	
+
+	private static final String propertyLocation = "spring_consumer_client.properties";
 	private final RpcConsumerClient rpcClient;
-	Map<String, String> prop = new HashMap<String, String>();
 	private IProcessor processor;
 	
-	public SimpleConsumerClient(String serverAddr, int serverPort, String topic, IProcessor processor) {
+	public SimpleConsumerClient(String serverAddr, int serverPort, IProcessor processor) {
 		this.rpcClient = SupportFactory.getRestSupport(RpcConsumerClient.class);
 		rpcClient.init(serverAddr, serverPort);
 		
 		this.processor = processor;
-		
-		prop.put("max.poll.records", Constants.MAX_POLL_RECORDS + ""); 
-		prop.put("topic", topic);
+
+		Map<String, String> propMap = new HashMap<String, String>();
+		Properties props = loadProperties();
+		for (Entry<Object, Object> e : props.entrySet()) {
+			propMap.put(String.valueOf(e.getKey()), String.valueOf(e.getValue()));
+		}
 		
 		try {
-			this.rpcClient.initSession(prop);
+			this.rpcClient.initSession(propMap);
 		} catch (DDSRestRPCException e) {
 			e.printStackTrace();
 		}
@@ -50,9 +56,22 @@ public class SimpleConsumerClient {
 		try {
 			this.rpcClient.releaseSession();
 		} catch (DDSRestRPCException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.processor.close();
+	}
+	
+	private static Properties loadProperties() {
+		Properties props = new Properties();
+		
+		try {
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			InputStream is = classLoader.getResourceAsStream(propertyLocation);
+			props.load(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return props;
 	}
 }

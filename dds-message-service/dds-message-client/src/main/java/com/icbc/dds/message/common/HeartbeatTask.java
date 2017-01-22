@@ -7,7 +7,7 @@ import com.icbc.dds.api.exception.DDSRestRPCException;
 
 public class HeartbeatTask implements Runnable {
 
-	protected static final int HEARTBEAT_INTERVAL_MS = Constants.HEARTBEAT_INTERVAL_MS;
+	protected static final int HEARTBEAT_INTERVAL_MS = HeartbeatProperty.getHeartbeatIntervalMs();
 	
 	private RpcClient rpcClient;
 	private Thread monitoredThread;

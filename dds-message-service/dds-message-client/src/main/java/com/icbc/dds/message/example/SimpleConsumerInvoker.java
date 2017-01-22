@@ -14,8 +14,7 @@ public class SimpleConsumerInvoker {
 		
 		String serverAddr = args[0];
 		int serverPort = Integer.parseInt(args[1]);
-		String topic = "kafka1";
-		SimpleConsumerClient rpcClient = new SimpleConsumerClient(serverAddr, serverPort, topic, new NullProcessor());
+		SimpleConsumerClient rpcClient = new SimpleConsumerClient(serverAddr, serverPort, new NullProcessor());
 		
 		
 		long totalTime = 0;

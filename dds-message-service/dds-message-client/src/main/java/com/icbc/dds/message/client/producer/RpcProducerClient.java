@@ -81,6 +81,4 @@ public class RpcProducerClient extends RpcClient {
 	private String extractFromMessage(Message message) {
 		return message.getMessage();
 	}
-
-
 }
