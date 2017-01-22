@@ -1,5 +1,7 @@
 package com.icbc.dds.message.proxy;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,6 +39,7 @@ import com.icbc.dds.springboot.annotation.DDSService;
 public class ConsumerImpl {
     
 	private final Logger logger = Logger.getLogger(ConsumerImpl.class);
+	private static final String propertyLocation = "spring_consumer_proxy.properties";
 	private static Map<String, KafkaConsumer<Integer, String>> sessions = new ConcurrentHashMap<String, KafkaConsumer<Integer, String>>();
 	private static Map<String, Long> heartbeats = new ConcurrentHashMap<String, Long>();
 	private static HeartbeatScanner scanner = new HeartbeatScanner(sessions, heartbeats);
@@ -52,19 +55,8 @@ public class ConsumerImpl {
     @Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
     public Response init(Map<String, String> propMap) {
-		Properties props = new Properties();
-		props.put("bootstrap.servers", "122.20.157.61:21005");
-		props.put("group.id", "NewDemoConsumer");
-		props.put("enable.auto.commit", "false");
-		props.put("session.timeout.ms", "30000");
-		props.put("key.deserializer", "org.apache.kafka.common.serialization.IntegerDeserializer");
-		props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-		props.put("security.protocol", "PLAINTEXT");
-		props.put("sasl.kerberos.service.name", "kafka");
-		props.put("auto.offset.reset", "earliest");
-
-		//test
-		System.out.println("param-" + propMap);
+		Properties props = loadProperties();
+		
 		if (!propMap.containsKey("topic")) {
 			return Response.noContent().entity("error: topic is null").build();
 		}
@@ -155,5 +147,19 @@ public class ConsumerImpl {
 	private KafkaConsumer<Integer, String> getConsumer(String uuid) {
 		KafkaConsumer<Integer, String> consumer = sessions.get(uuid);
 		return consumer;
+	}
+	
+	private static Properties loadProperties() {
+		Properties props = new Properties();
+		
+		try {
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			InputStream is = classLoader.getResourceAsStream(propertyLocation);
+			props.load(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return props;
 	}
 }
