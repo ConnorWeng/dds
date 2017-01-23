@@ -1,10 +1,11 @@
 package com.icbc.dds.rpc.service;
 
-import com.icbc.dds.api.RegistryClient;
+import com.icbc.dds.api.Metrics;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by kfzx-wengxj on 15/01/2017.
@@ -16,9 +17,9 @@ public class ServiceProviderTest {
     }
 
     @Test
-    public void registryClientServiceNotFoundThenReturnDefaultRegistryClient() throws InstantiationException, IllegalAccessException {
-        RegistryClient client = ServiceProvider.get(RegistryClient.class, DefaultRegistryClient.class);
-        assertTrue(DefaultRegistryClient.class.isInstance(client));
+    public void metricsServiceNotFoundThenReturnDefaultMetrics() throws InstantiationException, IllegalAccessException {
+        Metrics metrics = ServiceProvider.get(Metrics.class, DefaultMetrics.class);
+        assertTrue(DefaultMetrics.class.isInstance(metrics));
     }
 
     @Test
