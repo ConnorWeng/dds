@@ -1,6 +1,5 @@
 package com.icbc.dds.springboot;
 
-import com.icbc.dds.api.RegistryClient;
 import com.icbc.dds.registry.client.DDSClient;
 import com.icbc.dds.springboot.annotation.DisableDDSClient;
 import org.slf4j.Logger;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.SmartLifecycle;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
@@ -24,13 +22,8 @@ public class DDSRegistryConfiguration implements SmartLifecycle, ApplicationCont
     private boolean isRunning = false;
 
     @Autowired
-    private RegistryClient registryClient;
+    private DDSClient ddsClient;
     private boolean enabled = true;
-
-    @Bean
-    public RegistryClient registryClient() {
-        return new DDSClient();
-    }
 
     @Override
     public boolean isAutoStartup() {
@@ -39,19 +32,19 @@ public class DDSRegistryConfiguration implements SmartLifecycle, ApplicationCont
 
     @Override
     public void stop(Runnable callback) {
-        registryClient.deRegister();
+        ddsClient.deRegister();
         isRunning = false;
     }
 
     @Override
     public void start() {
-        registryClient.register();
+        ddsClient.register();
         isRunning = true;
     }
 
     @Override
     public void stop() {
-        registryClient.deRegister();
+        ddsClient.deRegister();
         isRunning = false;
     }
 

@@ -143,4 +143,11 @@ public class DDSClient implements RegistryClient {
 		this.instanceInfo = instanceInfo;
 	}
 
+	public int getPort() {
+		if (prop.containsKey("port")) {
+			return Integer.parseInt(prop.getProperty("port"));
+		} else {
+			throw new DDSRegistryException("服务端口未配置");
+		}
+	}
 }
