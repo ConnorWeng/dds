@@ -7,14 +7,13 @@ import com.icbc.dds.message.client.consumer.SimpleConsumerClient;
 public class SimpleConsumerInvoker {
 
 	public static void main(String[] args) throws Exception {
-		if (args.length != 2) {
+		if (args.length != 1) {
 			throw new IllegalArgumentException(
 					"[usage] java client.consumer.outer.SimpleClientInvoker <ip> <port>");
 		}
 		
-		String serverAddr = args[0];
-		int serverPort = Integer.parseInt(args[1]);
-		SimpleConsumerClient rpcClient = new SimpleConsumerClient(serverAddr, serverPort, new NullProcessor());
+		String serviceName = args[0];
+		SimpleConsumerClient rpcClient = new SimpleConsumerClient(serviceName, new NullProcessor());
 		
 		
 		long totalTime = 0;

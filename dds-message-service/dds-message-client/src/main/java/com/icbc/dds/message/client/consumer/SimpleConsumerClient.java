@@ -12,9 +12,9 @@ public class SimpleConsumerClient {
 	private final RpcConsumerClient rpcClient;
 	private IProcessor processor;
 	
-	public SimpleConsumerClient(String serverAddr, int serverPort, IProcessor processor) {
+	public SimpleConsumerClient(String serviceName, IProcessor processor) {
 		this.rpcClient = SupportFactory.getRestSupport(RpcConsumerClient.class);
-		rpcClient.init(serverAddr, serverPort);
+		rpcClient.init(serviceName);
 		
 		this.processor = processor;
 		

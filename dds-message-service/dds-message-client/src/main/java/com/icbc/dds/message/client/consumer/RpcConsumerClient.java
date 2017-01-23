@@ -22,8 +22,8 @@ public class RpcConsumerClient extends RpcClient {
 	private int pollRecordsTimeoutMs = ConsumerClientProperty.getPollRecordsTimeoutMs();
 	private Map<String, String> props = ConsumerClientProperty.getInitProps();
 	
-	public synchronized void init(String serverAddr, int serverPort) {
-		super.init(serverAddr, serverPort, "consumer");
+	public synchronized void init(String serviceName) {
+		super.init(serviceName, "consumer");
 	}
 	
 	public synchronized void initSession() throws DDSRestRPCException {
@@ -40,7 +40,7 @@ public class RpcConsumerClient extends RpcClient {
 
 	public synchronized List<Message> getMessage() throws DDSRestRPCException {
 		DataObject dataObject = this.getRestTemplate()
-				.service(serverAddr, serverPort)
+				.service(serviceName)
 				.path(messagePath + uuid)
 				.accept(MediaType.APPLICATION_JSON_TYPE)
 				.type(MediaType.TEXT_PLAIN_TYPE)
@@ -56,7 +56,7 @@ public class RpcConsumerClient extends RpcClient {
 
 	public synchronized void commit() throws DDSRestRPCException {
 		StatusObject statusObject = this.getRestTemplate()
-				.service(serverAddr, serverPort)
+				.service(serviceName)
 				.path(messagePath + uuid)
 				.accept(MediaType.APPLICATION_JSON_TYPE)
 				.type(MediaType.TEXT_PLAIN_TYPE)

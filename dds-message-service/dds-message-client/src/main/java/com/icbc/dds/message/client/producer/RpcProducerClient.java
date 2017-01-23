@@ -17,8 +17,8 @@ public class RpcProducerClient extends RpcClient {
 	private static final  Logger logger = Logger.getLogger(RpcProducerClient.class);
 	private String messagePath = "/producer/messages/";
 	
-	public void init(String serverAddr, int serverPort) {
-		super.init(serverAddr, serverPort, "producer");
+	public void init(String serviceName) {
+		super.init(serviceName, "producer");
 	}
 	
 	public synchronized void initSession() throws DDSRestRPCException {
@@ -43,7 +43,7 @@ public class RpcProducerClient extends RpcClient {
         formMap.put("message", data);
         
 		StatusObject statusObject = this.getRestTemplate()
-				.service(serverAddr, serverPort)
+				.service(serviceName)
 				.path(messagePath + uuid)
 				.accept(MediaType.APPLICATION_JSON_TYPE)
 				.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
@@ -62,7 +62,7 @@ public class RpcProducerClient extends RpcClient {
         formMap.put("message", message);
         
         StatusObject statusObject = this.getRestTemplate()
-				.service(serverAddr, serverPort)
+				.service(serviceName)
 				.path(messagePath + uuid)
 				.accept(MediaType.APPLICATION_JSON_TYPE)
 				.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)

@@ -13,9 +13,9 @@ public class SimpleProducerClient {
 	private RpcProducerClient rpcClient;
 	Map<String, String> props = new HashMap<String, String>();
 	
-	public SimpleProducerClient(String serverAddr, int serverPort) {
+	public SimpleProducerClient(String serviceName) {
 		this.rpcClient = SupportFactory.getRestSupport(RpcProducerClient.class);
-		rpcClient.init(serverAddr, serverPort);
+		rpcClient.init(serviceName);
 		
 		try {
 			this.rpcClient.initSession();

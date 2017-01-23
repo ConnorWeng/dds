@@ -15,16 +15,15 @@ public class SimpleProducerInvoker {
 		}
 		String data = new String(bytes);
 		
-		if (args.length != 3) {
+		if (args.length != 2) {
 			throw new IllegalArgumentException(
 					"[usage] java client.producer.outer.SimpleClientInvoker <ip> <port> <totalNum>");
 		}
 		
-		String serverAddr = args[0];
-		int serverPort = Integer.parseInt(args[1]);
-		long totalNum = Long.parseLong(args[2]);
+		String serviceName = args[0];
+		long totalNum = Long.parseLong(args[1]);
 
-		SimpleProducerClient rpcClient = new SimpleProducerClient(serverAddr, serverPort);
+		SimpleProducerClient rpcClient = new SimpleProducerClient(serviceName);
 		
 		long totalTime = 0;
 		long start = System.currentTimeMillis();

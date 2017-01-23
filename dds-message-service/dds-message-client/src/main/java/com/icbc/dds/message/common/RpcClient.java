@@ -14,23 +14,21 @@ import com.icbc.dds.rpc.support.RestSupport;
 public class RpcClient extends RestSupport {
 
 	private final static Logger logger = Logger.getLogger(RpcClient.class);
-	protected String serverAddr;
-	protected int serverPort;
+	protected String serviceName;
 	private String sessionPath;
 	protected String uuid;
 
 	protected long totalTime = 0; //test
 	protected long sendTimes = 0; //test
 	
-	public void init(String serverAddr, int serverPort, String kafkaType) {
-		this.serverAddr = serverAddr;
-		this.serverPort = serverPort;
+	public void init(String serviceName, String kafkaType) {
+		this.serviceName = serviceName;
 		this.sessionPath = "/" + kafkaType + "/sessions/";
 	}
 	
 	public void initSession(Map<String, String> props) throws DDSRestRPCException {
 		StatusObject statusObject = this.getRestTemplate()
-				.service(serverAddr, serverPort)
+				.service(serviceName)
 				.path(sessionPath)
 				.accept(MediaType.APPLICATION_JSON_TYPE)
 				.type(MediaType.APPLICATION_JSON_TYPE)
@@ -42,7 +40,7 @@ public class RpcClient extends RestSupport {
 	
 	public void releaseSession() throws DDSRestRPCException {
 		StatusObject statusObject = this.getRestTemplate()
-				.service(serverAddr, serverPort)
+				.service(serviceName)
 				.path(sessionPath + uuid)
 				.accept(MediaType.APPLICATION_JSON_TYPE)
 				.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
@@ -57,7 +55,7 @@ public class RpcClient extends RestSupport {
 	public void heartbeat() throws DDSRestRPCException {
 		if (uuid != null) {
 			StatusObject statusObject = this.getRestTemplate()
-					.service(serverAddr, serverPort)
+					.service(serviceName)
 					.path(sessionPath + uuid)
 					.accept(MediaType.APPLICATION_JSON_TYPE)
 					.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
