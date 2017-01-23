@@ -10,9 +10,9 @@ import org.apache.log4j.Logger;
 
 public class HeartbeatScanner implements Runnable {
 	
-	protected static final int CHECK_SPAN_MS = HeartbeatProperty.getCheckSpanMs();
-	public static final int HEARTBEAT_INTERVAL_MS = HeartbeatProperty.getHeartbeatIntervalMs();
-	protected static final int HEARTBEAT_EXPIRE_TIMES = HeartbeatProperty.getHeartbeatExpireTimes();
+	protected static final long CHECK_SPAN_MS = HeartbeatProperty.getCheckSpanMs();
+	public static final long HEARTBEAT_INTERVAL_MS = HeartbeatProperty.getHeartbeatIntervalMs();
+	protected static final long HEARTBEAT_EXPIRE_TIMES = HeartbeatProperty.getHeartbeatExpireTimes();
 	
 	private static final Logger logger = Logger.getLogger(HeartbeatScanner.class);
 	

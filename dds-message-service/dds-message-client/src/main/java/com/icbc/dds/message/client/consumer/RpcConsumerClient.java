@@ -14,19 +14,19 @@ import com.icbc.dds.message.common.RpcClient;
 import com.icbc.dds.message.pojo.DataObject;
 import com.icbc.dds.message.pojo.StatusObject;
 
-
 public class RpcConsumerClient extends RpcClient {
 
 	private final static Logger logger = Logger.getLogger(RpcConsumerClient.class);
 
 	private String messagePath = "/consumer/messages/";
-	private long getMessageTimeoutMs = 1000;
+	private int pollRecordsTimeoutMs = ConsumerClientProperty.getPollRecordsTimeoutMs();
+	private Map<String, String> props = ConsumerClientProperty.getInitProps();
 	
 	public synchronized void init(String serverAddr, int serverPort) {
 		super.init(serverAddr, serverPort, "consumer");
 	}
 	
-	public synchronized void initSession(Map<String, String> props) throws DDSRestRPCException {
+	public synchronized void initSession() throws DDSRestRPCException {
 		super.initSession(props);
 	}
 	
@@ -44,7 +44,7 @@ public class RpcConsumerClient extends RpcClient {
 				.path(messagePath + uuid)
 				.accept(MediaType.APPLICATION_JSON_TYPE)
 				.type(MediaType.TEXT_PLAIN_TYPE)
-				.query("timeout", getMessageTimeoutMs+"")
+				.query("timeout", pollRecordsTimeoutMs+"")
 				.get(DataObject.class);
 		List<String> response = new ArrayList<String> ();
 		if (dataObject.isSuccess()) {

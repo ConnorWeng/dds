@@ -9,12 +9,12 @@ public class HeartbeatProperty {
 	private static final String propertyLocation = "spring_heartbeat.properties";
 	private static Properties props = loadProperties();
 	
-	public static int getHeartbeatIntervalMs() {
+	public static long getHeartbeatIntervalMs() {
 		return getProperty("heartbeat.interval.ms", 3000);
 	}
 
-	private static int getProperty(String key, int defaultVal) {
-		return Integer.parseInt((String) props.getOrDefault(key, defaultVal + ""));
+	private static long getProperty(String key, long defaultVal) {
+		return Long.parseLong((String) props.getOrDefault(key, defaultVal + ""));
 	}
 
 	private static Properties loadProperties() {

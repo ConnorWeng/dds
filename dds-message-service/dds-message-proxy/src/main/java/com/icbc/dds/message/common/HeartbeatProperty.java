@@ -8,20 +8,20 @@ public class HeartbeatProperty {
 
 	private static final String propertyLocation = "spring_heartbeat.properties";
 	private static Properties props = loadProperties();
-	public static int getCheckSpanMs() {
+	public static long getCheckSpanMs() {
 		return getProperty("check.span.ms", 6000);
 	}
 
-	public static int getHeartbeatIntervalMs() {
+	public static long getHeartbeatIntervalMs() {
 		return getProperty("heartbeat.interval.ms", 3000);
 	}
 
-	public static int getHeartbeatExpireTimes() {
+	public static long getHeartbeatExpireTimes() {
 		return getProperty("heartbeat.expire.times", 3);
 	}
 
-	private static int getProperty(String key, int defaultVal) {
-		return Integer.parseInt((String) props.getOrDefault(key, defaultVal + ""));
+	private static long getProperty(String key, long defaultVal) {
+		return Long.parseLong((String) props.getOrDefault(key, defaultVal + ""));
 	}
 
 	private static Properties loadProperties() {

@@ -1,4 +1,4 @@
-package com.icbc.dds.message.client;
+package com.icbc.dds.message.pojo;
 
 import java.util.List;
 

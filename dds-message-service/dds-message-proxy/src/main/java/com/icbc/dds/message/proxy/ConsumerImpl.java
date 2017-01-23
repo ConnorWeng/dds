@@ -29,8 +29,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.log4j.Logger;
 
-import com.icbc.dds.message.client.DataObject;
-import com.icbc.dds.message.client.StatusObject;
+import com.icbc.dds.message.pojo.DataObject;
+import com.icbc.dds.message.pojo.StatusObject;
 import com.icbc.dds.message.common.HeartbeatScanner;
 import com.icbc.dds.springboot.annotation.DDSService;
 

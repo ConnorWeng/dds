@@ -14,16 +14,16 @@ import com.icbc.dds.message.pojo.StatusObject;
 
 public class RpcProducerClient extends RpcClient {
 
-	private final static Logger logger = Logger.getLogger(RpcProducerClient.class);
-
+	private static final  Logger logger = Logger.getLogger(RpcProducerClient.class);
 	private String messagePath = "/producer/messages/";
 	
 	public void init(String serverAddr, int serverPort) {
 		super.init(serverAddr, serverPort, "producer");
 	}
 	
-	public synchronized void initSession(Map<String, String> props) throws DDSRestRPCException {
-		super.initSession(props);
+	public synchronized void initSession() throws DDSRestRPCException {
+		Map<String, String> propMap = ProducerClientProperty.getInitProps();
+		super.initSession(propMap);
 	}
 	
 	public synchronized void heartbeat() throws DDSRestRPCException {

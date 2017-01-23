@@ -23,7 +23,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.log4j.Logger;
 
-import com.icbc.dds.message.client.StatusObject;
+import com.icbc.dds.message.pojo.StatusObject;
 import com.icbc.dds.message.common.HeartbeatScanner;
 import com.icbc.dds.springboot.annotation.DDSService;
 
