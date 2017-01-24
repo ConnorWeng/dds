@@ -1,9 +1,11 @@
 package com.icbc.dds.registry.client;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.net.Inet4Address;
+import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -120,9 +122,12 @@ public class DDSClient implements RegistryClient {
 				if (networkInterface.isLoopback() || networkInterface.isVirtual() || !networkInterface.isUp()) {
 					continue;
 				}
-				Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
-				if (addresses.hasMoreElements()) {
-					return addresses.nextElement().getHostAddress();
+				
+				List<InterfaceAddress> addresses = networkInterface.getInterfaceAddresses();
+				for (InterfaceAddress addr : addresses) {
+					if (addr.getAddress() instanceof Inet4Address) {
+						return addr.getAddress().getHostAddress();
+					}
 				}
 			}
 			throw new NullPointerException();
