@@ -11,7 +11,7 @@ public interface EurekaClient {
 	 * @param instanceInfo
 	 * @return
 	 */
-	public void register(InstanceInfo instanceInfo);
+	public boolean register(InstanceInfo instanceInfo);
 
 	/**
 	 * 注销
@@ -19,7 +19,7 @@ public interface EurekaClient {
 	 * @param app
 	 * @param instance
 	 */
-	public void deRegister(String app, String instanceId);
+	public boolean deRegister(String app, String instanceId);
 
 	/**
 	 * 心跳
@@ -28,7 +28,7 @@ public interface EurekaClient {
 	 * @param instance
 	 * @return
 	 */
-	public void renew(String app, String instanceId);
+	public boolean renew(String app, String instanceId);
 
 	/**
 	 * 上传metrics
@@ -38,7 +38,7 @@ public interface EurekaClient {
 	 * @param metrics
 	 * @return
 	 */
-	public int updateMetrics(String app, String instanceId, String metrics);
+	public boolean updateMetrics(String app, String instanceId, String metrics);
 
 	/**
 	 * 根据服务名查询实例信息

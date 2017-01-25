@@ -9,7 +9,7 @@ import com.icbc.dds.registry.client.common.Constants;
 public class RenewJob {
 	private Timer timer;
 	private String timerName = Constants.DEFAULT_JOB_NAME;
-	private boolean isDaemon = true;
+	private boolean isDaemon = false;
 	private TimerTask renewTask;
 	private long delay = Constants.DEFAULT_DELAY;
 	private long period = Constants.DEFAULT_PERIOD;

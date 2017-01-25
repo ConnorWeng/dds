@@ -29,7 +29,7 @@ public class JerseyEurekaClient implements EurekaClient {
 	}
 
 	@Override
-	public void register(InstanceInfo instanceInfo) {
+	public boolean register(InstanceInfo instanceInfo) {
 		ClientResponse response = client.resource(requestBase)
 				.path(instanceInfo.getInstanceInfo().getApp())
 				.accept(MediaType.APPLICATION_JSON_TYPE)
@@ -39,19 +39,22 @@ public class JerseyEurekaClient implements EurekaClient {
 		if (response.getStatus() != 204) { // 204代表注册成功
 			throw new DDSResponseException("注册中心返回状态码：" + response.getEntity(String.class));
 		}
+		return true;
 	}
 
 	@Override
-	public void deRegister(String app, String instanceId) {
+	public boolean deRegister(String app, String instanceId) {
 		client.resource(requestBase).path(app).path(instanceId).delete();
+		return true;
 	}
 
 	@Override
-	public void renew(String app, String instanceId) {
+	public boolean renew(String app, String instanceId) {
 		ClientResponse response = client.resource(requestBase).path(app).path(instanceId).accept(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class);
 		if (response.getStatus() != 200) { // 200代表心跳成功
 			throw new DDSResponseException(String.valueOf(response.getStatus()));
 		}
+		return true;
 	}
 
 	@Override
@@ -66,8 +69,8 @@ public class JerseyEurekaClient implements EurekaClient {
 	}
 
 	@Override
-	public int updateMetrics(String app, String instanceId, String metrics) {
-		return 0;
+	public boolean updateMetrics(String app, String instanceId, String metrics) {
+		return true;
 	}
 
 }

@@ -21,6 +21,7 @@ import com.icbc.dds.registry.client.job.RenewTask;
 import com.icbc.dds.registry.client.pojo.InstanceInfo;
 import com.icbc.dds.registry.client.pojo.InstanceWrapper;
 import com.icbc.dds.registry.client.transport.DDSResponseException;
+import com.icbc.dds.registry.client.transport.EurekaClient;
 import com.icbc.dds.registry.client.transport.JerseyEurekaClient;
 
 public class DDSClient implements RegistryClient {
@@ -29,20 +30,24 @@ public class DDSClient implements RegistryClient {
 	private int retry = Constants.DEFAULT_RETRY_TIMES;
 	private long interval = Constants.DAFAULT_SLEEP_INTERVAL;
 	private final Properties prop = new Properties();
-	private JerseyEurekaClient eurekaClient;
+	private EurekaClient eurekaClient;
 	private InstanceInfo instanceInfo = null;
 	private RenewJob renewJob = null;
 	private Cache cache;
 
 	public DDSClient() {
-		init(Constants.DEFAULT_CONF_FILE_NAME);
+		init(Constants.DEFAULT_CONF_FILE_NAME, null);
 	}
 	
 	public DDSClient(String fileName) {
-		init(fileName);
+		init(fileName, null);
 	}
 	
-	private void init(String fileName) {
+	public DDSClient(String fileName, EurekaClient eurekaClient) {
+		init(fileName, eurekaClient);
+	}
+	
+	private void init(String fileName, EurekaClient eurekaClient) {
 		try {
 			prop.load(DDSClient.class.getClassLoader().getResourceAsStream(fileName));
 		} catch (IOException e) {
@@ -53,14 +58,18 @@ public class DDSClient implements RegistryClient {
 			throw new DDSRegistryException("缺少配置");
 		}
 
-		this.eurekaClient = new JerseyEurekaClient(prop.getProperty("eureka_servers"));
+		if (eurekaClient == null) {
+			this.eurekaClient = new JerseyEurekaClient(prop.getProperty("eureka_servers"));
+		} else {
+			this.eurekaClient = eurekaClient;
+		}
 
 		if (prop.containsKey("service_name") && !"".equals(prop.getProperty("service_name")) 
 				&& prop.containsKey("port") && !"".equals(prop.getProperty("port"))) { // 服务端配置
 			// 获取本机ip
 			String ip = getIp();
 			this.instanceInfo = new InstanceInfo(new InstanceWrapper(ip, prop.getProperty("service_name"), ip, prop.getProperty("zone"), Integer.parseInt(prop.getProperty("port"))));
-			renewJob = new RenewJob(new RenewTask(eurekaClient, instanceInfo));
+			renewJob = new RenewJob(new RenewTask(this.eurekaClient, instanceInfo));
 			if (prop.containsKey("timer_delay")) {
 				renewJob.setDelay(Long.parseLong(prop.getProperty("timer_delay")));
 			}
@@ -68,7 +77,10 @@ public class DDSClient implements RegistryClient {
 				renewJob.setPeriod(Long.parseLong(prop.getProperty("timer_period")));
 			}
 		} else {
-			this.cache = new Cache(eurekaClient, prop.getProperty("zone"));
+			this.cache = new Cache(this.eurekaClient, prop.getProperty("zone"));
+			if (prop.containsKey("cache_expire_time")) {
+				cache.setExpireTime(Long.parseLong(prop.getProperty("cache_expire_time")));
+			}
 			if (prop.containsKey("thread_expire_time")) {
 				cache.setThreadExpireTime(Long.parseLong(prop.getProperty("thread_expire_time")));
 			}

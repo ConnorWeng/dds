@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,7 @@ public class Cache {
 			try {
 				ApplicationWrapper application = this.eurekaClient.getApp(app);
 				List<InstanceWrapper> instances = application.getInstanceInfos();
+//				System.out.println(instances.size());
 				for (InstanceWrapper instance : instances) {
 					String key = (app + instance.getVipAddress()).toLowerCase();
 					if (!localZone.equalsIgnoreCase(instance.getVipAddress())) {
@@ -51,8 +53,9 @@ public class Cache {
 					}
 					cache.get(key).add(instance);
 				}
+				
 				appUpdateTimeMap.put(app, currentTime); // 调整更新时间
-				logger.debug("服务{}缓存更新成功", app);
+				logger.info("服务{}缓存更新成功", app);
 			} catch (Exception e) {
 				logger.info("本次服务{}缓存更新失败，失败信息：{}", app, e);
 			}
@@ -67,20 +70,20 @@ public class Cache {
 		}
 
 		if (threadExpireMap.get() == -1l) { // 线程首次调用
-			logger.debug("线程{}首次调用", Thread.currentThread().getName());
+//			logger.info("线程{}首次调用", Thread.currentThread().getName());
 			threadExpireMap.set(currentTime);
 		}
-		logger.debug("current:{}, thread:{}, div:{}, expire:{}", currentTime, threadExpireMap.get(), currentTime - threadExpireMap.get(), threadExpireTime);
+//		logger.debug("current:{}, thread:{}, div:{}, expire:{}", currentTime, threadExpireMap.get(), currentTime - threadExpireMap.get(), threadExpireTime);
 		if (currentTime - threadExpireMap.get() < threadExpireTime && cache.containsKey((app + localZone).toLowerCase())) { // 本园区优先
-			logger.debug("返回本园区实例");
+//			logger.debug("返回本园区实例");
 			return getRandomInstanceFromCache((app + localZone).toLowerCase());
 		} else { // 返回其他园区
 			threadExpireMap.set(currentTime);
 			if (cache.containsKey((app + remoteZone).toLowerCase())) {
-				logger.debug("返回其它园区实例");
+//				logger.info("返回其它园区实例");
 				return getRandomInstanceFromCache((app + remoteZone).toLowerCase());
 			} else {
-				logger.debug("服务未发现已注册实例");
+//				logger.info("服务未发现已注册实例");
 				return null;
 			}
 		}

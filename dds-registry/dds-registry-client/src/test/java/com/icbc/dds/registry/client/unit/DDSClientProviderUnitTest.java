@@ -3,6 +3,7 @@ package com.icbc.dds.registry.client.unit;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +20,7 @@ import com.icbc.dds.registry.client.pojo.InstanceInfo;
 import com.icbc.dds.registry.server.RegistryServer;
 
 public class DDSClientProviderUnitTest {
+	private final static ExecutorService service = Executors.newSingleThreadExecutor();
 	private String providerConf = "provider.conf";
 	private String consumerConf = "consumer.conf";
 	private String wrongParamConf = "wrong-params.conf";
@@ -27,11 +29,6 @@ public class DDSClientProviderUnitTest {
 	@Test(expected = DDSRegistryException.class)
 	public void wrongParamTest() {
 		new DDSClient(wrongParamConf);
-	}
-
-	@Test
-	public void registerSuccessTest() {
-		provider.register();
 	}
 
 	@Test(expected = DDSRegistryException.class)
@@ -43,12 +40,13 @@ public class DDSClientProviderUnitTest {
 	@Test
 	public void getInstanceByAppNameTest() {
 		provider.register();
-		DDSClient consumer = new DDSClient(consumerConf);
+
 		try {
 			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {
 
 		}
+		DDSClient consumer = new DDSClient(consumerConf);
 		com.icbc.dds.api.pojo.InstanceInfo instance = consumer.getInstanceByAppName("cms");
 		assertEquals(8080, instance.getPort());
 	}
@@ -64,7 +62,7 @@ public class DDSClientProviderUnitTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		init();
-		Executors.newSingleThreadExecutor().submit(new Runnable() {
+		service.submit(new Runnable() {
 			@Override
 			public void run() {
 				RegistryServer.main(new String[] {});
@@ -72,15 +70,15 @@ public class DDSClientProviderUnitTest {
 		}).get();
 	}
 
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		service.shutdown();
+	}
+
 	@Before
 	public void setUp() throws Exception {
 		this.provider = new DDSClient(providerConf);
-		provider.setInterval(1000);
 		provider.setRetry(1);
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
 	}
 
 	@After
