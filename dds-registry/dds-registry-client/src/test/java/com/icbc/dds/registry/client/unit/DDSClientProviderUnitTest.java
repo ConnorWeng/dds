@@ -45,12 +45,11 @@ public class DDSClientProviderUnitTest {
 		provider.register();
 		DDSClient consumer = new DDSClient(consumerConf);
 		try {
-			TimeUnit.SECONDS.sleep(20);
+			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {
 
 		}
 		com.icbc.dds.api.pojo.InstanceInfo instance = consumer.getInstanceByAppName("cms");
-//		assertEquals("localhost", instance.getIpAddr());
 		assertEquals(8080, instance.getPort());
 	}
 

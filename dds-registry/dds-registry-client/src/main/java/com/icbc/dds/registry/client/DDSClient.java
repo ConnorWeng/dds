@@ -61,8 +61,17 @@ public class DDSClient implements RegistryClient {
 			String ip = getIp();
 			this.instanceInfo = new InstanceInfo(new InstanceWrapper(ip, prop.getProperty("service_name"), ip, prop.getProperty("zone"), Integer.parseInt(prop.getProperty("port"))));
 			renewJob = new RenewJob(new RenewTask(eurekaClient, instanceInfo));
+			if (prop.containsKey("timer_delay")) {
+				renewJob.setDelay(Long.parseLong(prop.getProperty("timer_delay")));
+			}
+			if (prop.containsKey("timer_period")) {
+				renewJob.setPeriod(Long.parseLong(prop.getProperty("timer_period")));
+			}
 		} else {
 			this.cache = new Cache(eurekaClient, prop.getProperty("zone"));
+			if (prop.containsKey("thread_expire_time")) {
+				cache.setThreadExpireTime(Long.parseLong(prop.getProperty("thread_expire_time")));
+			}
 		}
 	}
 

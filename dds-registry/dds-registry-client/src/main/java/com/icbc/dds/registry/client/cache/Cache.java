@@ -52,7 +52,7 @@ public class Cache {
 					cache.get(key).add(instance);
 				}
 				appUpdateTimeMap.put(app, currentTime); // 调整更新时间
-				logger.info("服务{}缓存更新成功", app);
+				logger.debug("服务{}缓存更新成功", app);
 			} catch (Exception e) {
 				logger.info("本次服务{}缓存更新失败，失败信息：{}", app, e);
 			}
@@ -67,20 +67,20 @@ public class Cache {
 		}
 
 		if (threadExpireMap.get() == -1l) { // 线程首次调用
-			logger.info("线程{}首次调用", Thread.currentThread().getName());
+			logger.debug("线程{}首次调用", Thread.currentThread().getName());
 			threadExpireMap.set(currentTime);
 		}
-		logger.info("current:{}, thread:{}, div:{}, expire:{}", currentTime, threadExpireMap.get(), currentTime - threadExpireMap.get(), threadExpireTime);
+		logger.debug("current:{}, thread:{}, div:{}, expire:{}", currentTime, threadExpireMap.get(), currentTime - threadExpireMap.get(), threadExpireTime);
 		if (currentTime - threadExpireMap.get() < threadExpireTime && cache.containsKey((app + localZone).toLowerCase())) { // 本园区优先
-			logger.info("返回本园区实例");
+			logger.debug("返回本园区实例");
 			return getRandomInstanceFromCache((app + localZone).toLowerCase());
 		} else { // 返回其他园区
 			threadExpireMap.set(currentTime);
 			if (cache.containsKey((app + remoteZone).toLowerCase())) {
-				logger.info("返回其它园区实例");
+				logger.debug("返回其它园区实例");
 				return getRandomInstanceFromCache((app + remoteZone).toLowerCase());
 			} else {
-				logger.info("服务未发现已注册实例");
+				logger.debug("服务未发现已注册实例");
 				return null;
 			}
 		}
@@ -90,5 +90,21 @@ public class Cache {
 		List<InstanceWrapper> sameZoneInstances = cache.get(key);
 		Random random = new Random();
 		return sameZoneInstances.get(random.nextInt(sameZoneInstances.size()));
+	}
+
+	public long getExpireTime() {
+		return expireTime;
+	}
+
+	public void setExpireTime(long expireTime) {
+		this.expireTime = expireTime;
+	}
+
+	public long getThreadExpireTime() {
+		return threadExpireTime;
+	}
+
+	public void setThreadExpireTime(long threadExpireTime) {
+		this.threadExpireTime = threadExpireTime;
 	}
 }

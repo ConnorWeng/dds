@@ -39,7 +39,7 @@ public class DDSClientTest {
 		provider.register();
 
 		try {
-			TimeUnit.SECONDS.sleep(25);
+			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {
 
 		}
