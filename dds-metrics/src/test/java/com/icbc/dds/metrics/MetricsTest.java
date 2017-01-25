@@ -4,6 +4,7 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.Timer;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.SortedMap;
@@ -76,6 +77,7 @@ public class MetricsTest {
     }
 
     @Test
+    @Ignore
     public void oneThreadFailsNearly100TimesPerMinute() throws InterruptedException {
         Thread thread = new Thread(r3);
         thread.start();
