@@ -21,7 +21,6 @@
         <module>dds-api</module>
         <module>dds-demo</module>
         <module>spring-boot-starter-dds</module>
-        <module>distribution</module>
     </modules>
 
     <dependencyManagement>
@@ -102,6 +101,16 @@
     <profiles>
         <profile>
             <id>dist</id>
+            <modules>
+                <module>dds-registry</module>
+                <module>dds-message-service</module>
+                <module>dds-rpc</module>
+                <module>dds-metrics</module>
+                <module>dds-api</module>
+                <module>dds-demo</module>
+                <module>spring-boot-starter-dds</module>
+                <module>distribution</module>
+            </modules>
             <build>
                 <resources>
                     <resource>
