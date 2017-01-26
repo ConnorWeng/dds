@@ -1,44 +1,63 @@
 package com.icbc.dds.metrics;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
-import com.codahale.metrics.Timer.Context;
-
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by kfzx-wengxj on 16/01/2017.
  */
-public final class Metrics implements com.icbc.dds.api.Metrics {
-    private final MetricRegistry registry = new MetricRegistry();
+public class Metrics implements com.icbc.dds.api.Metrics {
+    // TODO: 25/01/2017 配置化，单位为秒
+    private static final int REPORT_INTERVAL = 60;
 
-    public Metrics() {
-    }
+    private static ConcurrentHashMap<String, SingleServiceMetric> registry = new ConcurrentHashMap<String, SingleServiceMetric>();
+    private static Reporter reporter = new Reporter();
 
-    private final ThreadLocal<HashMap<String, Context>> contextMap =
-            new ThreadLocal<HashMap<String, Context>>() {
+    private ThreadLocal<HashMap<String, Long>> contextMap =
+            new ThreadLocal<HashMap<String, Long>>() {
                 @Override
-                protected HashMap<String, Context> initialValue() {
-                    return new HashMap<String, Context>();
+                protected HashMap<String, Long> initialValue() {
+                    return new HashMap<String, Long>();
                 }
             };
 
-    @Override
-    public void tickStart(String name) {
-        contextMap.get().put(name, registry.timer(name).time());
+    public void startReport() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                reporter.report(registry);
+            }
+        }, 0, 1000 * REPORT_INTERVAL);
     }
 
     @Override
-    public void tickStop(String name, boolean isSuccess) {
-        Timer.Context context = contextMap.get().get(name);
-        context.stop();
-        if (!isSuccess) {
-            // FIXME: 16/01/2017 按分钟取平均数，非绝对准确
-            registry.meter(name + "#fail").mark();
+    public void tickStart(String name) {
+        contextMap.get().put(name, System.nanoTime());
+    }
+
+    @Override
+    public void tickStop(String name, boolean success) {
+        Long start = contextMap.get().get(name);
+        Long elapsed = System.nanoTime() - start;
+        if (!registry.containsKey(name)) {
+            makeSureKeyExist(name);
+        }
+        registry.get(name).update(elapsed, success);
+    }
+
+    private synchronized void makeSureKeyExist(String key) {
+        if (!registry.containsKey(key)) {
+            registry.put(key, new SingleServiceMetric());
         }
     }
 
-    public MetricRegistry getRegistry() {
+    public static ConcurrentHashMap<String, SingleServiceMetric> getRegistry() {
         return registry;
+    }
+
+    public void clear() {
+        registry.clear();
     }
 }
