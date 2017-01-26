@@ -72,7 +72,7 @@ public class MicroService {
 
 服务消费方通过`dds-rpc`程序包可以方便地调用服务，无需关心注册中心。
 
-首先再新建一个java项目，将`dds-rpc-1.0-SNAPSHOT-distribution`程序包下的所有jar包都放到项目classpath目录下，在classpath根目录下提供一个配置文件`dds-client.conf`，内容如下:
+首先再新建一个java项目，将`dds-rpc-1.0-SNAPSHOT-distribution`和`dds-registry-client-1.0-SNAPSHOT-distribution`程序包下的所有jar包都放到项目classpath目录下（重复jar包可互相覆盖），在classpath根目录下提供一个配置文件`dds-client.conf`，内容如下:
 
 ```properties
 # 注册中心地址以及园区信息
@@ -114,6 +114,12 @@ public class ServiceConsumer {
 在`dds-rpc`模块测试案例中覆盖了所有复杂场景。REST服务端示例代码请查看`src/test/java/com/icbc/dds/rpc/support/RestTestServices`，REST调用端示例代码请查看`src/test/java/com/icbc/dds/rpc/support/RestSupportIntegrationTest`。
 
 # DDS开发指南 #
+
+## maven命令 ##
+
+- `mvn clean test`: 编译整个项目并运行所有测试
+- `mvn clean package -Pdist`: 构建程序包用于分发
+- 在dds-registry-server模块根目录下通过maven命令`mvn package spring-boot:repackage`可直接打包出一个可运行的jar包，通过命令`java -jar dds-registry-server-1.0-SNAPSHOT.jar`就可以启动一个监听8761端口的注册中心服务端（eureka server）。
 
 ## 项目模块 ##
 
