@@ -14,6 +14,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by kfzx-wengxj on 14/01/2017.
@@ -25,6 +26,28 @@ public class RestTemplate {
     private Client client;
     private RegistryClient registryClient;
     private Metrics metrics;
+
+    // FIXME: 02/02/2017 什么时候清理？
+    private static ConcurrentHashMap<String, InstanceInfo> instances = new ConcurrentHashMap<String, InstanceInfo>();
+
+    public static void reset() {
+        instances.clear();
+    }
+
+    private InstanceInfo getInstanceByAppName(String appName, int retryTimes) {
+        if (retryTimes == 0) {
+            InstanceInfo instance = instances.get(appName);
+            if (instance != null) return instance;
+        }
+        return getNextInstanceByAppName(appName);
+    }
+
+    private synchronized InstanceInfo getNextInstanceByAppName(String appName) {
+        InstanceInfo instanceInfo = registryClient.getInstanceByAppName(appName);
+        // TODO: 02/02/2017 null检查
+        instances.put(appName, instanceInfo);
+        return instanceInfo;
+    }
 
     public RestTemplate(RegistryClient registryClient, Metrics metrics) {
         this.registryClient = registryClient;
@@ -53,7 +76,7 @@ public class RestTemplate {
         ClientHandlerException clientHandlerException = null;
         for (int i = 0; i < RETRY_TIMES; i++) {
             try {
-                InstanceInfo instanceInfo = registryClient.getInstanceByAppName(appName);
+                InstanceInfo instanceInfo = getInstanceByAppName(appName, i);
                 return this.get(instanceInfo.getIpAddr(), instanceInfo.getPort(), path, mediaType, params, responseType);
             } catch (ClientHandlerException e) {
                 // TODO: 16/01/2017 记录日志
@@ -121,7 +144,7 @@ public class RestTemplate {
         ClientHandlerException clientHandlerException = null;
         for (int i = 0; i < RETRY_TIMES; i++) {
             try {
-                InstanceInfo instanceInfo = registryClient.getInstanceByAppName(appName);
+                InstanceInfo instanceInfo = getInstanceByAppName(appName, i);
                 return this.cud(method, instanceInfo.getIpAddr(), instanceInfo.getPort(), path, acceptMediaType, sendMediaType, params, entity, responseType);
             } catch (ClientHandlerException e) {
                 // TODO: 16/01/2017 记录日志
