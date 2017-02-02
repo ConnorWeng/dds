@@ -2,6 +2,7 @@ package com.icbc.dds.rpc.template;
 
 import com.icbc.dds.api.Metrics;
 import com.icbc.dds.api.RegistryClient;
+import com.icbc.dds.api.exception.DDSInstantiationException;
 import com.icbc.dds.api.exception.DDSRestRPCException;
 import com.icbc.dds.api.pojo.InstanceInfo;
 import com.icbc.dds.rpc.service.DefaultMetrics;
@@ -85,5 +86,19 @@ public class RestTemplateTest {
         InstanceInfo instance1 = (InstanceInfo) getInstanceByAppName.invoke(restTemplate, "ExampleService", 0);
         InstanceInfo instance2 = (InstanceInfo) getInstanceByAppName.invoke(restTemplate, "ExampleService", 1);
         verify(mockedRegistryClient, times(2)).getInstanceByAppName("ExampleService");
+    }
+
+    @Test
+    public void getInstanceReturnNullThenThrowException() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RegistryClient mockedRegistryClient = mock(RegistryClient.class);
+        when(mockedRegistryClient.getInstanceByAppName("ExampleService")).thenReturn(null);
+        RestTemplate restTemplate = new RestTemplate(mockedRegistryClient, new DefaultMetrics());
+        Method getInstanceByAppName = RestTemplate.class.getDeclaredMethod("getInstanceByAppName", String.class, int.class);
+        getInstanceByAppName.setAccessible(true);
+        try {
+            getInstanceByAppName.invoke(restTemplate, "ExampleService", 0);
+        } catch (InvocationTargetException e) {
+            assertTrue(DDSRestRPCException.class.isInstance(e.getCause()));
+        }
     }
 }

@@ -34,7 +34,7 @@ public class RestTemplate {
         instances.clear();
     }
 
-    private InstanceInfo getInstanceByAppName(String appName, int retryTimes) {
+    private InstanceInfo getInstanceByAppName(String appName, int retryTimes) throws DDSRestRPCException {
         if (retryTimes == 0) {
             InstanceInfo instance = instances.get(appName);
             if (instance != null) return instance;
@@ -42,11 +42,14 @@ public class RestTemplate {
         return getNextInstanceByAppName(appName);
     }
 
-    private synchronized InstanceInfo getNextInstanceByAppName(String appName) {
+    private synchronized InstanceInfo getNextInstanceByAppName(String appName) throws DDSRestRPCException {
         InstanceInfo instanceInfo = registryClient.getInstanceByAppName(appName);
-        // TODO: 02/02/2017 null检查
-        instances.put(appName, instanceInfo);
-        return instanceInfo;
+        if (instanceInfo != null) {
+            instances.put(appName, instanceInfo);
+            return instanceInfo;
+        } else {
+            throw new DDSRestRPCException(String.format("no available service [%s] instances found", appName));
+        }
     }
 
     public RestTemplate(RegistryClient registryClient, Metrics metrics) {
