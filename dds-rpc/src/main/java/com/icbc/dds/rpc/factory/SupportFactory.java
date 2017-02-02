@@ -21,12 +21,16 @@ public class SupportFactory {
     private static final Logger logger = LoggerFactory.getLogger(SupportFactory.class);
     private static ConcurrentMap<Class, Object> instanceMap = new ConcurrentHashMap<Class, Object>();
 
-    // FIXME: 16/01/2017 不能保证单例
     public static <T extends RestSupport> T getRestSupport(Class<T> clazz) {
-        try {
-            Object instance = instanceMap.get(clazz);
-            if (instance != null) return (T) instance;
+        Object instance = instanceMap.get(clazz);
+        if (instance != null) return (T) instance;
+        return createNewRestSupport(clazz);
+    }
 
+    private synchronized static <T extends RestSupport> T createNewRestSupport(Class<T> clazz) {
+        Object instance = instanceMap.get(clazz);
+        if (instance != null) return (T) instance;
+        try {
             RegistryClient registryClient = ServiceProvider.get(RegistryClient.class, DefaultRegistryClient.class);
             Metrics metrics = ServiceProvider.get(Metrics.class, DefaultMetrics.class);
 
@@ -42,5 +46,9 @@ public class SupportFactory {
             logger.error("fail to create an instance of spi provider", e);
             throw new DDSInstantiationException(e);
         }
+    }
+
+    public static void reset() {
+        instanceMap.clear();
     }
 }
