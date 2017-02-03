@@ -2,6 +2,7 @@ package com.icbc.dds.springboot;
 
 import com.icbc.dds.registry.client.DDSClient;
 import com.icbc.dds.springboot.annotation.DDSService;
+import com.icbc.dds.springboot.container.servlet.SpringServlet;
 import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.apache.catalina.Context;
@@ -46,7 +47,7 @@ public class DDSServerRunner implements ApplicationContextAware, CommandLineRunn
         }
         DefaultResourceConfig defaultResourceConfig = new DefaultResourceConfig(beans);
         defaultResourceConfig.getClasses().add(JacksonJsonProvider.class);
-        return new ServletContainer(defaultResourceConfig);
+        return new SpringServlet(defaultResourceConfig, applicationContext);
     }
 
     @Override
